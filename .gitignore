@@ -1,0 +1,29 @@
+# Secret
+.env
+.env.*
+!.env.example
+appsettings.*.local.json
+*.pfx
+
+# .NET
+bin/
+obj/
+.vs/
+*.user
+TestResults/
+
+# Bản build FE được chép vào BE lúc publish
+src/BackEnd/DichVuCong.Api/wwwroot/
+
+# Node / FE
+node_modules/
+dist/
+playwright-report/
+test-results/
+
+# Dữ liệu mẫu chỉ dùng local
+data-mau/
+
+# OS / editor
+.DS_Store
+Thumbs.db

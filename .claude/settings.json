@@ -1,0 +1,8 @@
+{
+  "enabledPlugins": {
+    "vnr-bakit@vnr-bakit": false,
+    "vnr-scc-devkit@vnr-scc-devkit": false,
+    "vnr-qckit@vnr-qckit": false,
+    "vnr-swe@vnr-ai": false
+  }
+}

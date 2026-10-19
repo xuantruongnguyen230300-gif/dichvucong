@@ -1,0 +1,26 @@
+{
+  "banner": {
+    "mo-ta": "Tra cứu thủ tục hành chính, hồ sơ cần chuẩn bị và nơi nộp hồ sơ.",
+    "tieu-de-du-phong": "Tra cứu thủ tục hành chính"
+  },
+  "o-dich-vu": {
+    "tieu-de": "Dịch vụ nhanh"
+  },
+  "gio-lam-viec": {
+    "tieu-de": "Thời gian làm việc",
+    "sang": "Buổi sáng",
+    "chieu": "Buổi chiều",
+    "khoang": "{{tu}} – {{den}}",
+    "dang-mo": "Đang trong giờ làm việc",
+    "ngoai-gio": "Ngoài giờ làm việc",
+    "thu": {
+      "1": "Thứ Hai",
+      "2": "Thứ Ba",
+      "3": "Thứ Tư",
+      "4": "Thứ Năm",
+      "5": "Thứ Sáu",
+      "6": "Thứ Bảy",
+      "7": "Chủ nhật"
+    }
+  }
+}

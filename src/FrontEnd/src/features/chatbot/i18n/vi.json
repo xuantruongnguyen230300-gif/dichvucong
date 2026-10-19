@@ -1,0 +1,132 @@
+{
+  "khung": {
+    "ten": "Trợ lý thủ tục",
+    "dong": "Đóng trợ lý",
+    "danh-sach-tin": "Hội thoại với trợ lý",
+    "loi-chao": "Xin chào! Tôi trả lời câu hỏi về thủ tục hành chính tại Trung tâm: hồ sơ cần chuẩn bị, thời hạn, phí, nơi nộp.",
+    "dang-tim": "Đang tìm câu trả lời…"
+  },
+  "doc": {
+    "nhan": "Đọc câu trả lời"
+  },
+  "tin": {
+    "nguoi-dan": "Bạn hỏi:",
+    "tro-ly": "Trợ lý trả lời:"
+  },
+  "nhap": {
+    "nhan": "Câu hỏi",
+    "goi-y": "Nhập câu hỏi về thủ tục",
+    "gui": "Gửi",
+    "toi-da": "Tối đa {{so}} ký tự"
+  },
+  "chu-de": {
+    "nhan-nhom": "Chủ đề gợi ý",
+    "tieu-de": "Lĩnh vực {{ten}} có {{tong}} thủ tục:",
+    "hien-thi": "Hiển thị {{so}}/{{tong}} thủ tục",
+    "rong": "Chưa có thủ tục nào thuộc lĩnh vực này.",
+    "goi-y-ten": "Gõ tên thủ tục để hỏi thêm."
+  },
+  "goi-y": {
+    "tieu-de": "Bạn có thể hỏi tiếp:",
+    "giay-to": "Cần giấy tờ gì?",
+    "thoi-han": "Mấy ngày?",
+    "phi": "Phí bao nhiêu?",
+    "noi-nop": "Nộp ở đâu?"
+  },
+  "thu-tuc": {
+    "dong-dau": "{{ma}} – {{ten}}",
+    "muc": {
+      "thoi-han": "Thời hạn giải quyết",
+      "ho-so": "Thành phần hồ sơ",
+      "phi": "Phí, lệ phí",
+      "noi-nop": "Nơi nộp hồ sơ",
+      "trinh-tu": "Trình tự thực hiện",
+      "ket-qua": "Kết quả",
+      "can-cu": "Căn cứ pháp lý"
+    },
+    "thoi-han": "Thời hạn giải quyết: {{thoiHan}}",
+    "thoi-han-chua-ro": "Chưa ghi rõ thời hạn giải quyết — xem trên Cổng DVC Quốc gia.",
+    "phi": "Phí, lệ phí: {{phi}}",
+    "so-ban-chinh": "{{so}} bản chính",
+    "so-ban-sao": "{{so}} bản sao",
+    "con-giay-to": "và {{so}} giấy tờ nữa — xem chi tiết",
+    "hinh-thuc-nop": "Hình thức nộp: {{hinhThuc}}",
+    "buoc": "Bước {{so}}",
+    "cat-bot": "Hiển thị {{so}}/{{tong}} — xem đầy đủ trong chi tiết thủ tục.",
+    "chua-co": {
+      "ho-so": "Chưa có thông tin về thành phần hồ sơ.",
+      "phi": "Chưa có thông tin về phí, lệ phí.",
+      "noi-nop": "Chưa có thông tin về hình thức nộp hồ sơ.",
+      "trinh-tu": "Chưa có thông tin về trình tự thực hiện.",
+      "ket-qua": "Chưa có thông tin về kết quả.",
+      "can-cu": "Chưa có thông tin về căn cứ pháp lý."
+    },
+    "khac": "Nếu không đúng thủ tục, chọn lại bên dưới:",
+    "danh-sach": "Tìm thấy {{so}} thủ tục liên quan, sát nhất ở trên cùng:",
+    "lien-quan": "Thủ tục liên quan:",
+    "ma": "Mã: {{ma}}",
+    "cap": {
+      "xa": "Cấp xã",
+      "tinh": "Cấp tỉnh"
+    },
+    "xem-chi-tiet": "Xem chi tiết",
+    "xem-chi-tiet-ten": "Xem chi tiết {{ten}}",
+    "cong-dvc": "Xem và nộp trên Cổng DVC",
+    "cong-dvc-ten-an": "– {{ten}}",
+    "can-cu-noi": "{{soKyHieu}} – {{trichYeu}}",
+    "meta": "{{ma}} · {{cap}} · {{linhVuc}}"
+  },
+  "trung-tam": {
+    "dia-chi": "Địa chỉ Trung tâm:",
+    "xem-ban-do": "Xem bản đồ",
+    "gio-lam-viec": "Giờ làm việc của Trung tâm:",
+    "sang": "Buổi sáng",
+    "chieu": "Buổi chiều",
+    "khoang": "{{tu}} – {{den}}",
+    "khoang-ngay": "{{tu}} – {{den}}",
+    "dang-mo": "Đang trong giờ làm việc",
+    "ngoai-gio": "Ngoài giờ làm việc",
+    "thu": {
+      "1": "Thứ Hai",
+      "2": "Thứ Ba",
+      "3": "Thứ Tư",
+      "4": "Thứ Năm",
+      "5": "Thứ Sáu",
+      "6": "Thứ Bảy",
+      "7": "Chủ nhật"
+    },
+    "dien-thoai": "Số điện thoại Trung tâm:",
+    "email": "Email Trung tâm:",
+    "nop-truc-tuyen": "Nộp hồ sơ trực tuyến tại:",
+    "chua-co": "Chưa có thông tin về {{muc}}.",
+    "ten-muc": {
+      "dia-chi": "địa chỉ Trung tâm",
+      "gio-lam-viec": "giờ làm việc",
+      "dien-thoai": "số điện thoại Trung tâm",
+      "email": "email Trung tâm",
+      "nop-truc-tuyen": "nộp hồ sơ trực tuyến"
+    },
+    "goi-hoi-truc-tiep": "Bạn có thể gọi Trung tâm để được hướng dẫn."
+  },
+  "quay": {
+    "nop-tai-quay": "Hồ sơ nộp tại quầy {{quay}}.",
+    "nop-tai-quay-linh-vuc": "Hồ sơ lĩnh vực {{linhVuc}} nộp tại quầy {{quay}}.",
+    "noi-tiep-nhan-chuyen": "Nơi tiếp nhận chuyển: {{noi}}",
+    "nop-tai-trung-tam": "Hồ sơ nộp tại {{ten}}, địa chỉ {{diaChi}}.",
+    "nop-tai-trung-tam-linh-vuc": "Hồ sơ lĩnh vực {{linhVuc}} nộp tại {{ten}}, địa chỉ {{diaChi}}.",
+    "nop-tai-trung-tam-chung": "Hồ sơ nộp tại Trung tâm.",
+    "nop-tai-trung-tam-chung-linh-vuc": "Hồ sơ lĩnh vực {{linhVuc}} nộp tại Trung tâm.",
+    "nhac-neu-linh-vuc": "Bạn cho biết lĩnh vực hoặc tên thủ tục để được hướng dẫn cụ thể hơn.",
+    "can-bo-tieu-de": "Cán bộ phụ trách:",
+    "can-bo-ten": "{{xungHo}} {{hoTen}}",
+    "can-bo-chuc-vu": "({{chucVu}})",
+    "can-bo-quay": "quầy {{quay}}",
+    "chua-co-can-bo": "Chưa có thông tin cán bộ phụ trách.",
+    "con-can-bo": "và {{so}} cán bộ nữa"
+  },
+  "khong-hieu": {
+    "xin-loi": "Xin lỗi, tôi chưa có câu trả lời cho câu hỏi này. Bạn có thể gọi điện hoặc đến hỏi trực tiếp cán bộ tại Trung tâm.",
+    "goi": "Gọi Trung tâm",
+    "zalo": "Mở Zalo"
+  }
+}

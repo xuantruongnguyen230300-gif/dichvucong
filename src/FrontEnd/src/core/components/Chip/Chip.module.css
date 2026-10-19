@@ -1,0 +1,73 @@
+.chip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--chip-height);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.chip:hover {
+  border-color: var(--color-primary);
+}
+
+/* Đang chọn: nền đậm + dấu ✓ (icon), không chỉ dựa vào màu */
+.daChon {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+.daChon:hover {
+  border-color: var(--color-primary-strong);
+  background: var(--color-primary-strong);
+}
+
+/* Hàng chip: cuộn ngang trong hàng, trang không cuộn ngang */
+.khung {
+  position: relative;
+  display: flex;
+  min-width: 0;
+}
+
+.hang {
+  display: flex;
+  flex: 1;
+  gap: 6px;
+  min-width: 0;
+  /* overflow-x: auto kéo theo overflow-y: auto và cắt viền focus (vẽ ra ngoài chip): đệm vừa đủ chứa viền, margin âm bù lại để bố cục không đổi */
+  padding: calc(var(--focus-ring-width) + var(--focus-ring-offset));
+  margin: calc((var(--focus-ring-width) + var(--focus-ring-offset)) * -1);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+/* Nút cuộn: chỉ máy có chuột */
+.khung .cuon {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .khung .cuon {
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    display: inline-grid;
+    width: var(--chip-height);
+    height: var(--chip-height);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-sm);
+  }
+  .khung .cuonTrai {
+    left: 0;
+  }
+  .khung .cuonPhai {
+    right: 0;
+  }
+}

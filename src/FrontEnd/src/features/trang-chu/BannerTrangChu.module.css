@@ -1,0 +1,64 @@
+/*
+ * Nền gradient hai điểm bằng token (chữ trắng trên cả hai điểm đạt >= 5,7:1); chỉ banner được dùng gradient.
+ * Chiều cao cố định theo số dòng: cơ quan 1 dòng, tên --so-dong-ten dòng (2 ở < 600px, 1 từ 600px), mô tả hai dòng ở < 600px, một dòng từ 600px.
+ * min-height chừa đủ chừng đó; tên và cơ quan dài hơn bị cắt bằng "…" (line-clamp), nên dữ liệu về không đẩy các khối bên dưới
+ * dù tên dài đến đâu. Tính từ chính token chữ nên đổi cỡ chữ (kiosk) vẫn khớp.
+ */
+.banner {
+  --so-dong-ten: 2;
+  --dong-co-quan: calc(var(--font-size-sm) * var(--line-height-body));
+  --dong-ten: calc(var(--font-size-2xl) * var(--line-height-heading));
+  --dong-mo-ta: calc(var(--font-size-md) * var(--line-height-body));
+
+  display: grid;
+  align-content: start;
+  gap: var(--space-1);
+  min-height: calc(2 * var(--space-5) + 2 * var(--space-1) + var(--dong-co-quan) + var(--so-dong-ten) * var(--dong-ten) + 2 * var(--dong-mo-ta));
+  padding: var(--space-5) var(--space-6);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(120deg, var(--color-primary-strong), var(--color-primary));
+  color: var(--color-on-primary);
+}
+@media (min-width: 600px) {
+  .banner {
+    --so-dong-ten: 1;
+    min-height: calc(2 * var(--space-5) + 2 * var(--space-1) + var(--dong-co-quan) + var(--so-dong-ten) * var(--dong-ten) + var(--dong-mo-ta));
+  }
+}
+
+.coQuan {
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.tieuDe {
+  margin: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--so-dong-ten);
+  line-clamp: var(--so-dong-ten);
+  font-size: var(--font-size-2xl);
+  line-height: var(--line-height-heading);
+}
+
+.moTa {
+  margin: 0;
+}
+
+/* Khối giữ chỗ mờ: cùng màu chữ của banner, độ mờ thấp (không cần token màu mới) */
+.cho {
+  display: block;
+  border-radius: var(--radius-pill);
+  background: currentcolor;
+  opacity: 0.2;
+}
+.choCoQuan {
+  width: 40%;
+  height: var(--dong-co-quan);
+}

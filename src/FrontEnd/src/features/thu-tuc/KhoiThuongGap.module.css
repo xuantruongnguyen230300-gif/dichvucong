@@ -1,0 +1,40 @@
+.khoi {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+/* Ô tìm + nút chuyển dạng ở hàng trên, chip lọc ở hàng dưới */
+.thanhCongCu {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+.hangTim {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+.oTim {
+  display: flex;
+  flex: 1 1 240px;
+  min-width: 0;
+}
+.oTim > * {
+  flex: 1;
+  min-width: 0;
+}
+
+/*
+ * Trên trang chủ các khối đã cách nhau --space-4 (grid của TrangChu); tiêu đề khối (SectionTitle, margin trên --space-6)
+ * chỉ cần bù --space-2 để cách ô dịch vụ 24px như prototype.
+ */
+.khoi > :first-child {
+  margin-top: var(--space-2);
+}

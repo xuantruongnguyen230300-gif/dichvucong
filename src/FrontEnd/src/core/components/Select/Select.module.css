@@ -1,0 +1,45 @@
+.khung {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.nhan {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.o {
+  position: relative;
+  display: flex;
+  min-width: 0;
+}
+
+/* Chữ dài bị cắt bằng dấu …; chừa chỗ bên phải cho mũi tên */
+.chon {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--control-height);
+  padding: 0 calc(var(--space-3) + 16px + var(--space-2)) 0 var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  color: inherit;
+  text-overflow: ellipsis;
+  appearance: none;
+  cursor: pointer;
+}
+
+.muiTen {
+  position: absolute;
+  top: 50%;
+  right: var(--space-3);
+  color: var(--color-text-muted);
+  transform: translateY(-50%);
+  pointer-events: none; /* chạm vào mũi tên là chạm vào ô chọn bên dưới */
+}

@@ -1,0 +1,28 @@
+{
+  "thong-ke": {
+    "nhan": "Thống kê danh mục",
+    "xa": "Thủ tục cấp xã",
+    "tinh": "Thủ tục cấp tỉnh",
+    "linh-vuc": "Lĩnh vực"
+  },
+  "tab": {
+    "nhan": "Danh mục",
+    "xa": "Thủ tục cấp xã",
+    "tinh": "Thủ tục cấp tỉnh"
+  },
+  "loc": {
+    "nhan-tim": "Tìm theo tên, mã thủ tục hoặc lĩnh vực",
+    "linh-vuc": "Lĩnh vực",
+    "tat-ca-linh-vuc": "Tất cả lĩnh vực",
+    "linh-vuc-co-so": "{{ten}} ({{so}})",
+    "muc-do": "Mức độ",
+    "tat-ca-muc-do": "Tất cả mức độ"
+  },
+  "ket-qua": {
+    "so": "{{so}} thủ tục",
+    "so-dang-loc": "{{so}} thủ tục (đang lọc)",
+    "doi-tuong": "thủ tục",
+    "bang-xa": "Danh sách thủ tục cấp xã",
+    "bang-tinh": "Danh sách thủ tục cấp tỉnh"
+  }
+}

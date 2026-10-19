@@ -1,0 +1,168 @@
+/* Khung chat 370 x 530 px (tính bằng rem nên lớn theo kiosk), toàn màn hình dưới 600 px. Chỉ token. */
+.khung {
+  position: fixed;
+  right: var(--gutter);
+  bottom: calc(var(--gutter) + var(--fab-height) + var(--space-2));
+  z-index: var(--z-chat);
+  display: flex;
+  flex-direction: column;
+  width: 23.125rem;
+  height: min(33.125rem, calc(100dvh - var(--gutter) - var(--fab-height) - var(--space-2) - var(--space-4)));
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  animation: hien var(--duration-fast) var(--easing-standard);
+}
+.khung[hidden] {
+  display: none;
+}
+.khung:focus {
+  outline: none; /* khung chỉ nhận con trỏ bằng mã (vòng Tab rỗng); phần tử bên trong có viền focus riêng */
+}
+
+@media (max-width: 599px) {
+  .khung {
+    inset: 0;
+    inline-size: auto;
+    block-size: auto;
+    border: 0;
+    border-radius: 0;
+  }
+
+  /*
+   * Khung phủ cả màn hình nên trang phía sau khoá cuộn và bỏ dải cuộn cố định (scrollbar-gutter: stable ở global.css):
+   * nếu giữ, trình duyệt có thanh cuộn cổ điển chừa một dải ~15 px bên phải mà khung không phủ tới (F06 G3).
+   * Không dùng 100vw: đơn vị này tính cả thanh cuộn nên làm khung tràn ngang.
+   */
+  html:has(.khung:not([hidden])) {
+    overflow: hidden;
+    scrollbar-gutter: auto;
+  }
+}
+
+/* Hiệu ứng mở chỉ là độ mờ, tắt khi người dùng chọn giảm chuyển động */
+@keyframes hien {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .khung {
+    animation: none;
+  }
+}
+
+.dau,
+.nhacDangXuat,
+.chuDe,
+.nhap,
+.demKyTu,
+.mienTru {
+  flex: none; /* chỉ danh sách tin co giãn; các phần còn lại giữ nguyên chiều cao */
+}
+
+.dau {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-primary-strong);
+  color: var(--color-on-primary);
+}
+.ten {
+  flex: 1;
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.nhacDangXuat {
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.danhSach {
+  position: relative; /* mốc offsetTop khi cuộn tới đầu câu trả lời mới */
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 0;
+  padding: var(--space-3);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--color-bg);
+}
+
+.goiY {
+  display: grid;
+  gap: var(--space-1);
+  align-self: flex-start;
+}
+.goiYTieuDe {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+.hangChip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chuDe {
+  display: grid;
+  gap: var(--space-1);
+  max-height: 5.75rem;
+  padding: var(--space-2) var(--space-3);
+  overflow-y: auto;
+  border-top: 1px solid var(--color-border);
+}
+
+.nhap {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3) 0;
+  border-top: 1px solid var(--color-border);
+}
+.oNhap {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--control-height);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--font-size-md);
+}
+.oNhap:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+.demKyTu {
+  min-height: 0;
+  margin: 0;
+  padding: 0 var(--space-3);
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+}
+.demKyTu:not(:empty) {
+  padding-top: var(--space-1);
+}
+.mienTru {
+  margin: 0;
+  padding: var(--space-1) var(--space-3) var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-body);
+}
+
+:global(html.kiosk) .oNhap {
+  font-size: var(--font-size-lg);
+}

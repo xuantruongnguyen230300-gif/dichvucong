@@ -1,0 +1,4 @@
+/* Chỗ giữ của dòng nhắc đăng xuất (kiosk): đúng một dòng chữ nhỏ (font-size-sm × line-height-body), để danh sách không bị đẩy xuống (CLS) */
+.giuCho {
+  min-height: calc(var(--font-size-sm) * var(--line-height-body));
+}

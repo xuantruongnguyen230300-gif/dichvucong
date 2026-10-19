@@ -1,0 +1,88 @@
+/* Nền xanh đậm đặc (không gradient), chữ trắng, viền focus trắng (data-nen-dam đổi --color-focus) */
+.chanTrang {
+  background: var(--color-primary-strong);
+  color: var(--color-on-primary);
+  padding: var(--space-6) 0 var(--fab-clearance); /* chừa chỗ cho nút Trợ lý; kiosk chừa thêm cho "Bắt đầu lại" */
+}
+
+.chanTrang a {
+  color: var(--color-on-primary);
+}
+
+.khung {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.luoi {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-5);
+}
+
+.tieuDeKhoi {
+  overflow-wrap: anywhere;
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-heading);
+}
+
+.danhSach {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-wrap: anywhere;
+}
+
+.dong {
+  overflow-wrap: anywhere; /* chuỗi dài không dấu cách (địa chỉ, email) vẫn xuống dòng, không tràn */
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.bieuTuong {
+  flex: none;
+  margin-top: 2px;
+}
+
+.phapLy {
+  display: grid;
+  gap: var(--space-1);
+  margin-top: var(--space-5);
+  padding-top: var(--space-3);
+  border-top: 1px solid rgb(255 255 255 / 25%);
+  font-size: var(--font-size-sm);
+}
+.phapLy:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+.phapLy p {
+  overflow-wrap: anywhere;
+  margin: 0;
+}
+
+/* Khối giữ chỗ lúc chờ dữ liệu: đứng yên, mờ trên nền xanh đậm. Cao theo dòng chữ để khớp chân trang thật.
+   Dòng đầu là mức dự phòng cho trình duyệt chưa có đơn vị `lh` (Firefox 114–119). */
+.khoiCho {
+  display: block;
+  height: 1.4em;
+  height: 1lh;
+  border-radius: var(--radius-sm);
+  background: rgb(255 255 255 / 18%);
+}
+.khoiCho[data-dong='2'] {
+  height: 2.8em;
+  height: 2lh;
+}
+.khoiCho[data-dong='lk'] {
+  height: var(--target-min);
+}
+.tieuDeKhoi .khoiCho {
+  width: 55%;
+}

@@ -1,0 +1,58 @@
+.nut {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--control-height);
+  height: var(--control-height);
+  padding: 0;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+}
+.nut:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.ghost {
+  border-color: transparent;
+  background: transparent;
+}
+.ghost:hover {
+  background: var(--color-primary-soft);
+}
+
+/* Trên nền xanh đậm (đầu khung trợ lý) */
+.trenNenDam {
+  border-color: var(--color-on-primary);
+  background: transparent;
+  color: var(--color-on-primary);
+}
+.trenNenDam:hover {
+  color: var(--color-on-primary);
+  border-color: var(--color-on-primary);
+}
+.trenNenDam[aria-pressed='true'] {
+  background: var(--color-on-primary);
+  color: var(--color-primary-strong);
+}
+
+.nut[aria-pressed='true']:not(.trenNenDam) {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: inset 0 -2px 0 var(--color-on-primary);
+}
+
+.nut:disabled {
+  opacity: 0.5;
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
+.bieuTuong {
+  display: grid;
+  place-items: center;
+}

@@ -1,0 +1,127 @@
+/* Dải nền xanh đậm đặc, chữ trắng; data-nen-dam đổi viền focus sang trắng. Dưới 900px xếp dọc, từ 900px: tiêu đề | giờ | trạng thái. */
+.dai {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-2); /* cộng với khoảng cách giữa các khối của trang chủ → 24px như prototype */
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  background: var(--color-primary-strong);
+  color: var(--color-on-primary);
+}
+
+.tieuDe {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-heading);
+}
+
+/* flex để huy hiệu không nằm trong dòng chữ (không thêm khoảng trống dưới huy hiệu) */
+.trangThai {
+  display: flex;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+.danhSach {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Một dòng = nhãn thứ + tối đa hai buổi. Hẹp: nhãn một hàng, hai buổi cạnh nhau. */
+.hang {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-1) var(--space-2);
+}
+
+.nhanThu {
+  grid-column: 1 / -1;
+  overflow-wrap: anywhere;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+}
+
+.buoi {
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-on-primary) 12%, transparent);
+}
+.nhanBuoi,
+.khoangGio {
+  display: block;
+}
+.nhanBuoi {
+  font-size: var(--font-size-xs);
+}
+.khoangGio {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.ghiChu {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+/* Khối giữ chỗ: cao bằng phần thật của trường hợp thường gặp (một dòng gộp, hai buổi); tính từ cùng token nên không lệch */
+.choTrangThai,
+.choNhanThu,
+.choBuoi {
+  display: block;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-on-primary) 20%, transparent);
+}
+.choTrangThai {
+  width: 11rem;
+  max-width: 100%;
+  height: calc(var(--font-size-sm) * 1.6 + 2 * var(--space-1) + 2px); /* như Badge kichThuoc="vua": dòng 1.6, đệm dọc, viền */
+}
+.choNhanThu {
+  width: 8rem;
+  max-width: 100%;
+  height: calc(var(--font-size-md) * var(--line-height-body));
+}
+.choBuoi {
+  height: calc(2 * var(--space-2) + (var(--font-size-xs) + var(--font-size-lg)) * var(--line-height-body));
+  border-radius: var(--radius-sm);
+}
+
+@media (min-width: 900px) {
+  .dai {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--space-5);
+  }
+  .tieuDe {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .danhSach {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .trangThai {
+    grid-column: 3;
+    grid-row: 1;
+    justify-content: flex-end;
+  }
+  .ghiChu {
+    grid-row: 2;
+  }
+  .hang {
+    grid-template-columns: 11rem repeat(2, minmax(0, 14rem));
+    align-items: center;
+  }
+  .nhanThu {
+    grid-column: auto;
+  }
+}

@@ -1,0 +1,96 @@
+/* Ô lĩnh vực: cả ô bấm được (liên kết tên phủ kín ô bằng ::after), một điểm dừng Tab */
+.muc {
+  position: relative;
+  display: flex;
+  min-width: 0;
+}
+.muc > * {
+  flex: 1;
+}
+
+.dau {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.bieuTuong {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-strong);
+}
+
+.chu {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lienKet {
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  line-height: var(--line-height-heading);
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+.lienKet::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-md);
+}
+.muc:hover .lienKet {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+.muc:hover > * {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+/* Viền focus quanh cả ô, không tắt outline mà không thay */
+.lienKet:focus-visible {
+  outline: none;
+}
+.lienKet:focus-visible::after {
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.soThuTuc {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.quay {
+  margin: 0;
+  color: var(--color-primary-strong);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+}
+
+/* Mã QR ở đáy ô: các ô cùng hàng vẫn bằng nhau dù có hay không dòng quầy */
+.qr {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  margin-top: auto;
+  padding-top: var(--space-2);
+}
+
+.khungQr {
+  background: var(--color-neutral-soft);
+}
+
+.chuThich {
+  display: block;
+  min-height: calc(var(--font-size-sm) * var(--line-height-body));
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}

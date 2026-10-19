@@ -1,0 +1,73 @@
+/* Thanh điều hướng dính đầu màn hình khi cuộn (design-system §3: lớp đầu trang = 10) */
+.thanh {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.khung {
+  display: flex;
+  gap: var(--space-1);
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.muc {
+  position: relative; /* để nhãn đầy đủ ẩn chữ không làm tràn trang */
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--chieu-cao-dieu-huong);
+  padding: 0 var(--space-4);
+  border-bottom: 3px solid transparent;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+.muc:hover {
+  color: var(--color-primary);
+}
+.muc[aria-current='page'] {
+  border-bottom-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.bieuTuong {
+  flex: none;
+}
+
+.nhanNgan {
+  display: none;
+}
+
+/* Dưới 600px (khớp MQ_DIEN_THOAI): 3 mục chia đều, không cuộn ngang, không nút menu. Quá hẹp thì chữ xuống dòng. */
+@media (max-width: 599.98px) {
+  .khung {
+    gap: 0;
+  }
+  .muc {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0 var(--space-1);
+  }
+  .nhanDay {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .nhanNgan {
+    display: inline;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}

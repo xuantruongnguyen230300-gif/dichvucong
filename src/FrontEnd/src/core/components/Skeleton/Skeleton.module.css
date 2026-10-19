@@ -1,0 +1,117 @@
+/* Khối giữ chỗ đứng yên: không animation (BR-11, AC-18) */
+.khoi {
+  display: block;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--color-skeleton);
+}
+.khoi[data-rong='vua'] {
+  width: 60%;
+}
+.khoi[data-rong='ngan'] {
+  width: 40%;
+}
+.khoi[data-rong='nhan'] {
+  width: 30%;
+  height: 16px;
+  border-radius: var(--radius-pill);
+}
+.khoi[data-rong='nut'] {
+  height: var(--control-height);
+  margin-top: auto;
+  border-radius: var(--radius-sm);
+}
+.khoi[data-rong='dong'] {
+  height: 20px;
+}
+
+.the {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  /* Cao bằng thẻ thật có tên 3 dòng (đo ở 375/1280: 204 px; 600–1023: ~156 px; kiosk 2 cột: 168 px) */
+  min-height: 204px;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+@media (min-width: 600px) and (max-width: 1023.98px) {
+  .the {
+    min-height: 156px;
+  }
+}
+:global(html.kiosk) .the {
+  min-height: 168px;
+}
+
+/*
+ * Bảng giữ chỗ: cùng khung với `.vungCuon` của DataTable (viền, bo góc, giới hạn chiều cao theo màn hình), đầu bảng
+ * cao như ô đầu cột, mỗi dòng cao như dòng thật (nội dung tối thiểu 24 px của nút/liên kết + 2 × padding + viền dưới).
+ */
+.bang {
+  max-height: calc(100dvh - var(--sticky-offset) - var(--space-8));
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+.dauBang {
+  display: block;
+  height: calc(var(--font-size-sm) * var(--line-height-body) + 2 * var(--space-2) + 1px);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
+}
+.dongBang {
+  display: flex;
+  align-items: center;
+  height: calc(24px + 2 * var(--space-2) + 1px);
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+.dongBang:last-child {
+  height: calc(24px + 2 * var(--space-2));
+  border-bottom: 0;
+}
+.dongBang > .khoi {
+  width: 100%;
+}
+
+.dong {
+  display: grid;
+  gap: var(--space-2);
+}
+
+/* Dạng ô dịch vụ: kích thước khớp Tile (36 px icon; tên 2 dòng và dòng "Trang ngoài" theo cỡ chữ token) */
+.khoi[data-rong='bieu-tuong'] {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+}
+.khoi[data-rong='ten-o'] {
+  width: 80%;
+}
+.khoi[data-rong='ten-o-ngan'] {
+  width: 50%;
+}
+.khoi[data-rong='ngoai'] {
+  width: 40%;
+  height: 8px;
+}
+.dongTen,
+.dongNgoai {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.dongTen {
+  gap: 6px;
+  height: calc(2 * var(--font-size-md) * var(--line-height-body));
+}
+.dongNgoai {
+  height: calc(var(--font-size-xs) * var(--line-height-body));
+}

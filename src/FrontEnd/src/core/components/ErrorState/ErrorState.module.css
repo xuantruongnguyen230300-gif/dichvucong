@@ -1,0 +1,33 @@
+.khung {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: center;
+  margin-top: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-soft);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.bieuTuong {
+  color: var(--color-danger);
+}
+
+.tieuDe {
+  margin: 0;
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.noiDung,
+.ma {
+  margin: 0;
+}
+
+.ma {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+}

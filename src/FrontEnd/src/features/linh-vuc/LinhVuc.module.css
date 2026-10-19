@@ -1,0 +1,34 @@
+/* Các khối cách nhau bằng khoảng cách token (cùng nhịp với trang chủ, danh mục) */
+.trang {
+  display: grid;
+  gap: var(--space-4);
+  padding-top: var(--space-5);
+  min-width: 0;
+}
+
+.khungTim {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.huongDan {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+}
+
+/* 1 cột ở 375px, 2-3 cột ở máy tính bảng, 4-5 cột ở 1280px; kiosk dọc 1080px 4 cột. Không cuộn ngang ở 320px */
+.luoi {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

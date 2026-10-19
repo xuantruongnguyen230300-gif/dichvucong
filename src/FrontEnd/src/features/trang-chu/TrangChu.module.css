@@ -1,0 +1,6 @@
+/* Các khối cách nhau bằng khoảng cách token; khối không vẽ gì (ẩn) thì không để lại khoảng trống thừa */
+.trang {
+  display: grid;
+  gap: var(--space-4);
+  padding-top: var(--space-5);
+}

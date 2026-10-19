@@ -1,0 +1,16 @@
+.trang {
+  padding-top: var(--space-5);
+}
+
+.tieuDe {
+  margin: 0 0 var(--space-3);
+  color: var(--color-primary-strong);
+  font-size: var(--font-size-2xl);
+  line-height: var(--line-height-heading);
+}
+
+.hanhDong {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}

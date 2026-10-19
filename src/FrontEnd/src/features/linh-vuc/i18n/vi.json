@@ -1,0 +1,24 @@
+{
+  "muc": {
+    "tieu-de": "Lĩnh vực và mã QR",
+    "dem": "{{so}} lĩnh vực"
+  },
+  "huong-dan": "In mã QR dán tại quầy — người dân quét để xem ngay các thủ tục của lĩnh vực đó.",
+  "tim": {
+    "nhan": "Tìm lĩnh vực"
+  },
+  "danh-sach": {
+    "nhan": "Danh sách lĩnh vực"
+  },
+  "ket-qua": {
+    "doi-tuong": "lĩnh vực"
+  },
+  "o": {
+    "so-thu-tuc": "{{xa}} cấp xã · {{tinh}} cấp tỉnh",
+    "quay": "Quầy {{so}}"
+  },
+  "qr": {
+    "nhan": "Mã QR của lĩnh vực {{ten}}",
+    "chu-thich": "Quét để xem thủ tục"
+  }
+}

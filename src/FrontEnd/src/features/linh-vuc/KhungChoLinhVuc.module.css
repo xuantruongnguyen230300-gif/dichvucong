@@ -1,0 +1,36 @@
+/*
+ * Chỗ giữ của chữ trong ô lĩnh vực: mỗi dòng cao bằng dòng chữ thật (cỡ chữ và line-height theo token như OLinhVuc.module.css),
+ * thanh màu bên trong thấp hơn cho giống đoạn chữ. Khối đứng yên, không animation (BR-11).
+ */
+/* Cột chữ chiếm hết chỗ còn lại cạnh biểu tượng: thanh màu theo phần trăm bề rộng cột */
+.chu {
+  flex: 1;
+}
+
+.dong {
+  display: flex;
+  align-items: center;
+}
+.dongTen {
+  height: calc(var(--font-size-lg) * var(--line-height-heading));
+}
+.dongSo {
+  height: calc(var(--font-size-sm) * var(--line-height-body));
+}
+
+.khoi {
+  display: block;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--color-skeleton);
+}
+.tenDai {
+  width: 90%;
+}
+.tenNgan {
+  width: 55%;
+}
+.so {
+  width: 70%;
+  height: 8px;
+}

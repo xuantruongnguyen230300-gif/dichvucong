@@ -1,0 +1,139 @@
+{
+  "ung-dung": {
+    "tieu-de": "Tra cứu thủ tục hành chính",
+    "mo-ta": "Tra cứu thủ tục hành chính, giờ làm việc và các dịch vụ trực tuyến của Trung tâm Phục vụ hành chính công.",
+    "mau-tieu-de": "{{trang}} – {{trungTam}}"
+  },
+  "bo-qua": "Bỏ qua, tới nội dung chính",
+  "dieu-huong": {
+    "nhan": "Điều hướng chính"
+  },
+  "dau-trang": {
+    "dia-ban": "{{xa}} – {{tinh}}"
+  },
+  "nut": {
+    "dong": "Đóng",
+    "thu-lai": "Thử lại",
+    "ve-trang-chu": "Về trang chủ",
+    "xoa-bo-loc": "Xoá bộ lọc"
+  },
+  "trang-thai": {
+    "dang-tai": "Đang tải…",
+    "dang-xu-ly": "Đang xử lý"
+  },
+  "trang": {
+    "trang-chu": {
+      "ten": "Trang chủ",
+      "ten-ngan": "Trang chủ",
+      "mo-ta": "Tra cứu thủ tục hành chính, giờ làm việc và các dịch vụ trực tuyến của Trung tâm Phục vụ hành chính công."
+    },
+    "danh-muc": {
+      "ten": "Danh mục thủ tục",
+      "ten-ngan": "Danh mục",
+      "mo-ta": "Danh mục thủ tục hành chính cấp xã, cấp tỉnh: thành phần hồ sơ, thời hạn giải quyết, phí, lệ phí."
+    },
+    "linh-vuc": {
+      "ten": "Lĩnh vực và mã QR",
+      "ten-ngan": "Lĩnh vực",
+      "mo-ta": "Thủ tục hành chính theo từng lĩnh vực, kèm mã QR để mở nhanh trên điện thoại."
+    },
+    "khong-tim-thay": {
+      "ten": "Không tìm thấy trang",
+      "mo-ta": "Không tìm thấy trang bạn cần."
+    }
+  },
+  "chan-trang": {
+    "co-quan-chu-quan": "Cơ quan chủ quản: {{ten}}",
+    "nguoi-chiu-trach-nhiem": "Người chịu trách nhiệm nội dung: {{hoTen}}",
+    "nguoi-chiu-trach-nhiem-chuc-vu": "Người chịu trách nhiệm nội dung: {{hoTen}} – {{chucVu}}",
+    "lien-he": "Địa chỉ và liên hệ",
+    "xem-ban-do": "Xem bản đồ",
+    "lien-ket-huu-ich": "Liên kết hữu ích",
+    "mang-xa-hoi": "Mạng xã hội",
+    "kenh": {
+      "zalo-oa": "Zalo OA",
+      "facebook": "Facebook",
+      "youtube": "YouTube",
+      "tiktok": "TikTok"
+    },
+    "cap-nhat": "Dữ liệu thủ tục cập nhật ngày {{ngay}}",
+    "ban-quyen": "© {{ten}}"
+  },
+  "mien-tru": "Thông tin chỉ để tham khảo. Thành phần hồ sơ, thời hạn, phí chính thức căn cứ theo Cổng Dịch vụ công Quốc gia.",
+  "khong-tim-thay": {
+    "linh-vuc": {
+      "tieu-de": "Không tìm thấy lĩnh vực",
+      "xem-danh-muc": "Xem toàn bộ danh mục"
+    },
+    "thu-tuc": "Không tìm thấy thủ tục này. Thủ tục có thể đã đổi mã hoặc không còn áp dụng."
+  },
+  "loi": {
+    "du-lieu-khong-hop-le": "Thông tin gửi đi chưa hợp lệ. Vui lòng kiểm tra lại.",
+    "khong-tim-thay": "Không tìm thấy nội dung bạn cần.",
+    "phuong-thuc-khong-hop-le": "Yêu cầu không được hỗ trợ.",
+    "yeu-cau-qua-lon": "Nội dung gửi đi quá dài.",
+    "qua-nhieu-yeu-cau": "Bạn thao tác quá nhanh. Vui lòng đợi một lát rồi thử lại.",
+    "loi-he-thong": "Hệ thống đang gặp sự cố. Vui lòng thử lại sau.",
+    "mat-ket-noi": "Không kết nối được tới máy chủ. Vui lòng kiểm tra mạng rồi thử lại.",
+    "mac-dinh": "Có lỗi xảy ra. Vui lòng thử lại."
+  },
+  "trinh-duyet-cu": {
+    "huong-dan": "Trình duyệt của bạn đã cũ nên chưa mở được trang này. Vui lòng dùng Chrome, Edge, Cốc Cốc, Firefox hoặc Safari bản mới.",
+    "goi": "Cần hỗ trợ, gọi Trung tâm:"
+  },
+  "tro-ly": {
+    "nut": "Trợ lý"
+  },
+  "lien-ket-ngoai": {
+    "mo-trang-moi": "(mở trang mới)",
+    "trang-ngoai": "Trang ngoài"
+  },
+  "tim-kiem": {
+    "xoa": "Xoá từ khoá",
+    "so-ket-qua": "Có {{so}} kết quả.",
+    "khong-co-ket-qua": "Không có kết quả."
+  },
+  "chip": {
+    "cuon-trai": "Cuộn sang trái",
+    "cuon-phai": "Cuộn sang phải"
+  },
+  "cach-xem": {
+    "nhan": "Cách hiển thị",
+    "the": "Dạng thẻ",
+    "bang": "Dạng bảng"
+  },
+  "muc-do": {
+    "toan-trinh": "Toàn trình",
+    "mot-phan": "Một phần"
+  },
+  "phan-trang": {
+    "nhan": "Phân trang",
+    "truoc": "Trước",
+    "sau": "Sau",
+    "trang-truoc": "Trang trước",
+    "trang-sau": "Trang sau",
+    "trang-so": "Trang {{so}}"
+  },
+  "danh-sach": {
+    "vung-ket-qua": "Kết quả, trang {{trang}} trên {{tong}}",
+    "xem-dang-the": "Xem dạng thẻ"
+  },
+  "loi-tai": {
+    "tieu-de": "Chưa tải được dữ liệu.",
+    "goi": "Cần hỗ trợ, gọi Trung tâm:",
+    "ma-tra-cuu": "Mã tra cứu: {{ma}}"
+  },
+  "rong": {
+    "co-tu-khoa": "Không tìm thấy {{doiTuong}} phù hợp với '{{tuKhoa}}'",
+    "khong-tu-khoa": "Không tìm thấy {{doiTuong}} phù hợp",
+    "goi-y": {
+      "tieu-de": "Bạn có thể thử:",
+      "chinh-ta": "Kiểm tra lại chính tả hoặc thử từ khoá ngắn hơn.",
+      "xoa-bo-loc": "Xoá bộ lọc để tìm trong toàn bộ danh sách.",
+      "xoa-bo-loc-tren-thanh": "Bấm “Xoá bộ lọc” trên thanh bộ lọc để tìm trong toàn bộ danh sách.",
+      "hoi-tro-ly": "Hỏi Trợ lý thủ tục ở góc phải bên dưới màn hình.",
+      "goi-trung-tam": "Gọi Trung tâm:",
+      "hoi-can-bo": "Hỏi cán bộ tại Trung tâm."
+    }
+  }
+}

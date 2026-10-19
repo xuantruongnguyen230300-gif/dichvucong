@@ -1,0 +1,32 @@
+.tin {
+  max-width: 92%;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-chat);
+  overflow-wrap: anywhere;
+}
+
+.nguoiDan {
+  align-self: flex-end;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-bottom-right-radius: var(--space-1);
+}
+
+.troLy {
+  align-self: flex-start;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-bottom-left-radius: var(--space-1);
+}
+
+.chuNguoiDan {
+  margin: 0;
+  white-space: pre-line;
+}
+
+/* Kiosk: chữ trong bóng chat lớn hơn một bậc (rem đã lớn theo html.kiosk) */
+:global(html.kiosk) .tin {
+  font-size: var(--font-size-lg);
+}

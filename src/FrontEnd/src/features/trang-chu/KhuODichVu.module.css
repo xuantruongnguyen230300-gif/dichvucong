@@ -1,0 +1,14 @@
+/* Tiêu đề h2 chỉ có chữ ẩn: không chiếm chỗ, không đẩy lưới ô */
+.tieuDe {
+  margin: 0;
+}
+
+/* Dòng nhắc đăng xuất (kiosk) cách lưới ô một nhịp. `p.nhac` để thắng `margin: 0` của chunk kiosk bất kể thứ tự nạp CSS */
+p.nhac {
+  margin-bottom: var(--space-3);
+}
+
+/* Chỗ giữ của dòng nhắc trong lúc chunk kiosk chưa về: một dòng chữ nhỏ (font-size-sm, line-height-body) + khoảng cách dưới như p.nhac */
+.giuChoNhac {
+  min-height: calc(var(--font-size-sm) * var(--line-height-body) + var(--space-3));
+}

@@ -1,0 +1,53 @@
+.khung {
+  --chieu-cao-dieu-huong: calc(var(--control-height) + var(--space-2));
+  /* Thanh điều hướng dính đầu màn hình: bảng và phần cuộn tới dính dưới nó (DataTable dùng biến này) */
+  --sticky-offset: calc(var(--chieu-cao-dieu-huong) + 1px);
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh; /* trang ngắn thì chân trang vẫn nằm dưới cùng */
+}
+
+/* Ẩn tới khi nhận focus; hiện ở góc trên, trên cả điều hướng dính (BR-12) */
+.boQua {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-4);
+  z-index: calc(var(--z-header) + 1);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  font-weight: 600;
+  transform: translateY(-300%);
+}
+.boQua:focus {
+  transform: none;
+}
+
+.noiDung {
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 var(--gutter) var(--space-8);
+  scroll-margin-top: var(--sticky-offset);
+}
+/* Chỉ để nhận con trỏ từ liên kết bỏ qua; phần tử bên trong vẫn có viền focus */
+.noiDung:focus {
+  outline: none;
+}
+
+/*
+ * Khung chờ (CLS): chân trang ẩn khi trang còn khung chờ nào (cờ trạng thái `useCoKhungCho`, không dùng `:has` để chạy cả
+ * Firefox < 121). Khung chờ ngắn hơn nội dung thật; màn hình cao như kiosk 1920 px thì chân trang đang nằm trong màn hình
+ * sẽ bị đẩy đi khi dữ liệu về. Chân trang hiện sau khi trang dựng xong, ở cuối: phần tử mới hiện, không phải phần tử bị dịch.
+ */
+.chanTrangAn {
+  display: none;
+}
+/* Khung chờ của route nạp lười: cao tối thiểu một màn hình */
+.khungCho {
+  min-height: 100dvh;
+  padding-top: var(--space-5);
+}

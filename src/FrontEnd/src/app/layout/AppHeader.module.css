@@ -1,0 +1,94 @@
+.dauTrang {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.khung {
+  /* Cỡ chữ tên: dưới 600px nhỏ hơn (xem cuối tệp) */
+  --co-chu-ten: var(--font-size-xl);
+
+  display: flex;
+  align-items: center;
+  max-width: var(--content-max-width);
+  /* Giữ chiều cao khi đang tải và khi dữ liệu về: lớn hơn 60px thì bằng đúng khối chữ nhiều nhất (tên tối đa
+     --dau-trang-dong-ten dòng + địa bàn --dau-trang-dong-dia-ban dòng), nên tên dài mấy cũng không làm trang nhảy. */
+  min-height: max(
+    60px,
+    calc(
+      var(--dau-trang-dong-ten) * var(--co-chu-ten) * var(--line-height-heading) + 2px +
+        var(--dau-trang-dong-dia-ban) * var(--font-size-sm) * var(--line-height-body)
+    )
+  );
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.thuongHieu {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.logo {
+  flex: none;
+  width: 40px;
+  height: 40px;
+}
+
+.chu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ten {
+  color: var(--color-primary-strong);
+  font-size: var(--co-chu-ten);
+  font-weight: 700;
+  line-height: var(--line-height-heading);
+  -webkit-line-clamp: var(--dau-trang-dong-ten);
+  line-clamp: var(--dau-trang-dong-ten);
+}
+
+.diaBan {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  -webkit-line-clamp: var(--dau-trang-dong-dia-ban);
+  line-clamp: var(--dau-trang-dong-dia-ban);
+}
+
+/* Cắt chữ quá số dòng cho phép (chữ đầy đủ vẫn trong DOM, tooltip `title` và tên đọc của liên kết) */
+.ten,
+.diaBan {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.khoiTen,
+.khoiDiaBan {
+  display: block;
+  border-radius: 6px;
+  background: var(--color-skeleton);
+}
+.khoiTen {
+  width: 200px;
+  max-width: 100%;
+  height: 18px;
+}
+.khoiDiaBan {
+  width: 120px;
+  max-width: 100%;
+  height: 12px;
+}
+
+@media (max-width: 599.98px) {
+  .khung {
+    --co-chu-ten: var(--font-size-lg);
+  }
+}

@@ -1,0 +1,16 @@
+.nhac {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+.nhac > svg {
+  flex-shrink: 0;
+}
+
+/* FloatingButton cao max(44px, --control-height) = 48px ở kiosk; giữ min-height riêng để chắc chắn ≥ 48px (BR-7) */
+button.nutBatDauLai {
+  min-height: max(48px, var(--fab-height));
+}

@@ -1,0 +1,15 @@
+/* Khung vuông cố định 9 rem: QrLinhVuc và KhungQr (chỗ giữ) cùng cỡ để ô không nhảy chiều cao khi mã về */
+.qr {
+  display: block;
+  width: 9rem;
+  height: 9rem;
+  border-radius: var(--radius-sm);
+}
+
+/* Màu bằng lớp CSS (không thuộc tính style) để hợp CSP; in ra: chữ đen trên nền trắng */
+.nen {
+  fill: var(--color-surface);
+}
+.ma {
+  fill: var(--color-text);
+}

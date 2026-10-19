@@ -1,0 +1,98 @@
+/* Vùng tối + căn giữa. --modal-ke-duoi: chừa dải dưới ở kiosk để nút "Bắt đầu lại" không che chân popup. */
+.vungToi {
+  --modal-ke-duoi: var(--space-4);
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  place-items: center;
+  padding: var(--space-4) var(--space-4) var(--modal-ke-duoi);
+  background: var(--color-overlay);
+}
+:global(html.kiosk) .vungToi {
+  --modal-ke-duoi: calc(var(--fab-height) + var(--gutter) + var(--space-4));
+}
+
+.khung {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--modal-max-width);
+  max-height: calc(100dvh - var(--space-4) - var(--modal-ke-duoi));
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  /* Mở bằng opacity + translate trong 150ms; đóng thì gỡ ngay. prefers-reduced-motion tắt ở global.css. */
+  animation: vao var(--duration-fast) var(--easing-standard);
+}
+.khung:focus,
+.khung:focus-visible {
+  outline: none; /* khung chỉ nhận con trỏ để đọc tiêu đề; không phải điều khiển */
+}
+
+@keyframes vao {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-2));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.dau {
+  display: flex;
+  flex: none;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+.tieuDe {
+  flex: 1;
+  min-width: 0;
+}
+.chuTieuDe {
+  margin: var(--space-1) 0 0;
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-heading);
+  overflow-wrap: anywhere;
+}
+
+.than {
+  flex: 1;
+  min-height: 0;
+  padding: var(--space-3) var(--space-4);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+/* Khi tràn, thân nhận con trỏ: vòng viền nằm trong (khung cắt phần ngoài) */
+.than:focus-visible {
+  outline-offset: calc(var(--focus-ring-width) * -1);
+}
+
+.chan {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Điện thoại: toàn màn hình (khớp DIEM_GAY_DIEN_THOAI) */
+@media (max-width: 599.98px) {
+  .vungToi {
+    padding: 0;
+  }
+  .khung {
+    max-width: none;
+    max-height: none;
+    height: 100%;
+    border-radius: 0;
+  }
+}

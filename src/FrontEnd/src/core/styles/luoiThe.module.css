@@ -1,0 +1,44 @@
+/*
+ * Lưới thẻ dùng chung cho DataTable (dạng thẻ) và Skeleton (dạng thẻ).
+ * Số cột tối đa từ 1024px lấy từ biến --so-cot-toi-da, gán bằng prop style của React (qua CSSOM, hợp CSP).
+ * Khớp DIEM_GAY_DIEN_THOAI / DIEM_GAY_MAY_TINH trong diemGay.ts.
+ */
+.luoi {
+  --so-cot-toi-da: 4;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 600px) {
+  .luoi {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .luoi {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(max(240px, calc((100% - (var(--so-cot-toi-da) - 1) * var(--space-3)) / var(--so-cot-toi-da))), 1fr)
+    );
+  }
+}
+
+/* Kiosk: 2 cột */
+:global(html.kiosk) .luoi {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Thẻ cùng hàng cao bằng nhau */
+.muc {
+  display: flex;
+  min-width: 0;
+}
+.muc > * {
+  flex: 1;
+  min-width: 0;
+}

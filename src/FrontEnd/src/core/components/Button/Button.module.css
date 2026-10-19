@@ -1,0 +1,104 @@
+.nut {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--control-height);
+  padding: 0 var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  line-height: var(--line-height-body);
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+.primary:hover {
+  background: var(--color-primary-strong);
+}
+
+/* Chỉ dành cho liên kết "Xem và nộp trên Cổng DVC" (ExternalLink) */
+.accent {
+  background: var(--color-accent);
+  color: var(--color-on-primary);
+}
+.accent:hover {
+  background: var(--color-accent-strong);
+}
+
+.secondary {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  border-color: var(--color-border-strong);
+}
+.secondary:hover {
+  border-color: var(--color-primary);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--color-primary);
+}
+.ghost:hover {
+  background: var(--color-primary-soft);
+}
+
+/* Trông như liên kết, dùng cho "tên thủ tục — bấm mở popup" trong bảng */
+.lienKet {
+  min-height: var(--target-min); /* chữ nhìn như link nhưng vùng bấm vẫn >= 24 px */
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-primary);
+  font-weight: 500;
+  text-align: left;
+  white-space: normal;
+}
+.lienKet:hover {
+  background: none;
+  text-decoration: underline;
+}
+
+/* Bật/tắt: nền đặc + chữ trắng + vạch dưới, không chỉ dựa vào màu */
+.nut[aria-pressed='true'] {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: inset 0 -2px 0 var(--color-on-primary);
+}
+
+/* Vô hiệu: mờ và viền nét đứt */
+.nut:disabled {
+  opacity: 0.5;
+  border-style: dashed;
+  border-color: currentcolor;
+  cursor: not-allowed;
+}
+
+.nut[aria-busy='true'] {
+  cursor: progress;
+}
+
+/* Đang xử lý: chữ giữ chỗ (kích thước không đổi), biểu tượng đứng yên ở giữa */
+.noiDung {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.giuCho {
+  visibility: hidden;
+}
+.bieuTuongXuLy {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}

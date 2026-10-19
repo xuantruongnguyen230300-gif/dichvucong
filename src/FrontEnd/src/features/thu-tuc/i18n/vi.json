@@ -1,0 +1,60 @@
+{
+  "khoi": {
+    "tieu-de": "Thủ tục thường gặp",
+    "hien-thi": "Hiển thị {{so}}/{{tong}}",
+    "tim-nhan": "Tìm theo tên, mã thủ tục hoặc lĩnh vực",
+    "loc-nhan": "Lọc theo lĩnh vực",
+    "tat-ca": "Tất cả",
+    "doi-tuong": "thủ tục",
+    "ten-bang": "Danh sách thủ tục thường gặp"
+  },
+  "the": {
+    "xem-chi-tiet": "Xem chi tiết",
+    "xem-chi-tiet-ten": "Xem chi tiết {{ten}}",
+    "thoi-han": "Thời hạn: {{thoiHan}}"
+  },
+  "bang": {
+    "stt": "STT",
+    "ma": "Mã",
+    "ten": "Tên thủ tục",
+    "linh-vuc": "Lĩnh vực",
+    "muc-do": "Mức độ",
+    "co-quan": "Cơ quan thực hiện",
+    "cong-dvc": "Cổng DVC"
+  },
+  "muc-do": {
+    "toan-trinh": "Toàn trình",
+    "mot-phan": "Một phần"
+  },
+  "cong-dvc": "Xem và nộp trên Cổng DVC",
+  "cong-dvc-ten": "— {{ten}}",
+  "khong-co": "—",
+  "chi-tiet": {
+    "muc": {
+      "thong-tin-chung": "Thông tin chung",
+      "yeu-cau": "Yêu cầu, điều kiện",
+      "cach-thuc": "Cách thức nộp",
+      "thanh-phan": "Thành phần hồ sơ",
+      "trinh-tu": "Trình tự thực hiện",
+      "ket-qua": "Kết quả",
+      "can-cu": "Căn cứ pháp lý"
+    },
+    "nhan": {
+      "co-quan": "Cơ quan thực hiện",
+      "thoi-han": "Thời hạn giải quyết",
+      "phi": "Phí, lệ phí",
+      "cach-nop": "Cách nộp"
+    },
+    "thoi-han-chua-ro": "Chưa ghi rõ — xem trên Cổng DVC Quốc gia",
+    "so-ban": "Bản chính: {{chinh}} · Bản sao: {{sao}}",
+    "cach-thuc-bang": "Cách thức nộp hồ sơ",
+    "cot": {
+      "hinh-thuc": "Hình thức",
+      "thoi-gian": "Thời gian",
+      "phi": "Phí, lệ phí"
+    },
+    "ma": "Mã: {{ma}}",
+    "tieu-de-loi": "Chi tiết thủ tục",
+    "can-cu-noi": " — "
+  }
+}

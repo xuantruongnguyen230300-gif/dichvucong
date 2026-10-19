@@ -1,0 +1,22 @@
+.lienKet {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  gap: var(--space-1);
+  color: var(--color-primary);
+}
+.lienKet:hover {
+  text-decoration: underline;
+}
+
+/* Link gọn trong bảng: chữ xanh đậm, không xuống dòng */
+.dam {
+  color: var(--color-primary-strong);
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.bieuTuong {
+  flex: none;
+}

@@ -1,0 +1,65 @@
+.pager {
+  display: flex;
+  flex-wrap: wrap; /* phòng khi phóng to 200% */
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  margin-top: var(--space-4);
+}
+
+.nut {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-width: var(--control-height);
+  min-height: var(--control-height);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+.nut:hover {
+  border-color: var(--color-primary);
+}
+
+/* Trang hiện tại: nền đặc, chữ đậm và gạch chân — không chỉ dựa vào màu */
+.hienTai {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: default;
+}
+.hienTai:hover {
+  border-color: var(--color-primary);
+}
+
+.nut:disabled {
+  opacity: 0.5;
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
+.nutDi {
+  font-weight: 600;
+}
+
+.boQua {
+  min-width: var(--space-4);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* Dưới 600px: Trước/Sau chỉ có icon; tên đọc (aria-label) vẫn đủ */
+@media (max-width: 599.98px) {
+  .chu {
+    display: none;
+  }
+}

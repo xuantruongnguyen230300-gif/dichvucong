@@ -1,0 +1,118 @@
+/* Token thiết kế — nguồn: .specify/design-system.md §3 (màu bổ sung lấy từ prototype đã duyệt). */
+:root {
+  /* Màu */
+  --color-primary: #0b66c2;
+  --color-primary-strong: #074a90;
+  --color-primary-soft: #e8f1fb;
+  --color-accent: #dc2626;
+  --color-accent-strong: #b91c1c;
+  --color-bg: #eef5fc;
+  --color-surface: #ffffff;
+  --color-border: #d3e0ee;
+  --color-border-strong: #6b84a3;
+  --color-text: #0f172a;
+  --color-text-muted: #475569;
+  --color-on-primary: #ffffff;
+  --color-success: #047857;
+  --color-success-soft: #ecfdf5;
+  --color-warning: #92400e;
+  --color-warning-soft: #fffbeb;
+  --color-danger: #b91c1c;
+  --color-danger-soft: #fef2f2;
+
+  /* Màu bổ sung (prototype) */
+  --color-surface-alt: #f6f9fd;
+  --color-row-hover: #f8fbff;
+  --color-neutral-soft: #f1f5f9;
+  --color-success-border: #a7dcc6;
+  --color-warning-border: #f3d48a;
+  --color-danger-border: #f5b5b5;
+  --color-overlay: rgb(15 23 42 / 45%);
+  --color-skeleton: #e7eef6;
+  --color-focus: var(--color-primary);
+  --color-focus-on-dark: #ffffff;
+
+  /* Màu ô dịch vụ (icon trắng trên các màu này đạt ≥ 5:1) */
+  --color-tile-indigo: #4f46e5;
+  --color-tile-pink: #be185d;
+  --color-tile-teal: #0f766e;
+  --color-tile-orange: #c2410c;
+  --color-tile-blue: var(--color-primary);
+  --color-tile-navy: var(--color-primary-strong);
+
+  /* Chữ */
+  --font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --font-size-xs: 0.6875rem;
+  --font-size-sm: 0.75rem;
+  --font-size-md: 0.8125rem;
+  --font-size-lg: 0.875rem;
+  --font-size-xl: 1.125rem;
+  --font-size-2xl: 1.25rem;
+  --font-size-3xl: 1.75rem;
+  --line-height-body: 1.4;
+  --line-height-heading: 1.25;
+  --line-height-chat: 1.55;
+
+  /* Khoảng cách */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Bo góc, bóng */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+  --shadow-sm: 0 1px 4px rgb(15 23 42 / 10%);
+  --shadow-md: 0 4px 16px rgb(15 23 42 / 14%);
+
+  /* Lớp */
+  --z-header: 10;
+  --z-fab: 40;
+  --z-chat: 45;
+  --z-modal: 50;
+  --z-kiosk-reset: 55;
+
+  /* Chuyển động */
+  --duration-fast: 150ms;
+  --easing-standard: ease-out;
+
+  /* Điều khiển */
+  --control-height: 2.125rem;
+  --chip-height: 1.75rem;
+  --fab-height: 44px;
+  --target-min: 24px; /* vùng bấm tối thiểu (WCAG 2.2 AA, tiêu chí 2.5.8) */
+
+  /* Bố cục */
+  --content-max-width: 1280px;
+  --gutter: 16px;
+  --modal-max-width: 680px;
+  --fab-clearance: calc(var(--space-4) + 64px);
+  /* Đầu trang giữ chiều cao ổn định dù tên/địa bàn dài: số dòng tối đa, quá thì cắt bằng line-clamp (đủ chữ vẫn nằm trong DOM và `title`). Chân trang KHÔNG cắt chữ (TT 22/2023). */
+  --dau-trang-dong-ten: 2;
+  --dau-trang-dong-dia-ban: 1;
+  --sticky-offset: 0px;
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+}
+
+/* Chế độ kiosk: mọi cỡ chữ tính theo rem nên tự lớn theo. Khoảng cách, bo góc tính bằng px nên giữ nguyên. */
+html.kiosk {
+  font-size: 118.75%;
+  --control-height: max(2.5rem, 48px); /* 2,5rem = 47,5px ở kiosk: không dưới 48px (tiêu chí kiosk, design-system) */
+  --chip-height: var(--control-height);
+  --fab-height: max(44px, var(--control-height));
+  --fab-clearance: calc(var(--space-4) + 80px);
+}
+
+/* Mốc 600px khớp DIEM_GAY_DIEN_THOAI trong diemGay.ts */
+@media (min-width: 600px) {
+  :root {
+    --gutter: 24px;
+  }
+}

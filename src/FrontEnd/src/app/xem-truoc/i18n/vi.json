@@ -1,0 +1,162 @@
+{
+  "tieu-de": "Xem trước thành phần giao diện",
+  "mo-ta": "Trang chỉ có ở bản dev. Bày token và mọi thành phần lõi ở mọi biến thể, trạng thái, kể cả chế độ kiosk.",
+  "kiosk": {
+    "tieu-de": "Điều khiển",
+    "nut": "Chế độ kiosk",
+    "mo-ta": "Bật để thấy chữ và chiều cao điều khiển lớn lên (cỡ gốc 118,75%, điều khiển cao 48 px).",
+    "nhac-ghi-chu": "Dòng nhắc đăng xuất (F09), chỉ hiện khi bật kiosk. Nút Bắt đầu lại nằm trong khung chung của trang, không có ở trang xem trước này."
+  },
+  "token": {
+    "tieu-de": "Token",
+    "mau": "Màu",
+    "cap-mau": "Cặp chữ và nền, kèm tỉ lệ tương phản",
+    "tuong-phan": "{{chu}} trên {{nen}}: {{ti}}:1",
+    "chu-mau": "Chữ mẫu Aa",
+    "chu": "Cỡ chữ",
+    "chu-mau-dai": "Tra cứu thủ tục hành chính",
+    "khoang-cach": "Khoảng cách",
+    "bo-goc": "Bo góc",
+    "bong": "Bóng"
+  },
+  "nut": {
+    "tieu-de": "Nút",
+    "thuong": "Thường",
+    "vo-hieu": "Vô hiệu",
+    "dang-xu-ly": "Đang xử lý",
+    "bat-tat": "Bật/tắt",
+    "bam-de-xu-ly": "Bấm để xử lý (2 giây)",
+    "lien-ket-noi-bo": "Liên kết nội bộ",
+    "icon": "Nút chỉ có icon",
+    "nhan-icon": "Thêm",
+    "nhan-icon-bat": "Đọc to",
+    "nen-dam": "Trên nền xanh đậm (viền focus trắng): Tab vào các nút bên dưới",
+    "tren-nen-dam": "Nút trên nền đậm",
+    "primary": "Nút chính",
+    "secondary": "Nút phụ",
+    "ghost": "Nút ghost",
+    "lien-ket": "Nút liên kết",
+    "xem-chi-tiet": "Xem chi tiết",
+    "bat": "Đang bật",
+    "tat": "Đang tắt"
+  },
+  "lien-ket": {
+    "tieu-de": "Liên kết",
+    "web": "Mở Cổng Dịch vụ công Quốc gia",
+    "nop": "Xem và nộp trên Cổng DVC",
+    "dam": "Liên kết gọn trong bảng",
+    "nut-phu": "Nút phụ dạng liên kết",
+    "dien-thoai": "Gọi Trung tâm",
+    "thu": "Gửi thư cho Trung tâm",
+    "xau": "Liên kết sai định dạng (javascript:), chỉ còn là chữ thường"
+  },
+  "o-dich-vu": {
+    "tieu-de": "Ô dịch vụ",
+    "co-lien-ket": "Cổng Dịch vụ công Quốc gia",
+    "khong-lien-ket": "Ô chưa có liên kết",
+    "lien-ket-xau": "Ô có liên kết sai"
+  },
+  "nhan": {
+    "tieu-de": "Nhãn",
+    "info": "Hộ tịch",
+    "dai": "Quản lý, sử dụng và bảo vệ đất nông nghiệp trồng lúa nước theo quy hoạch sử dụng đất cấp xã",
+    "rut-gon": "Quản lý, sử dụng và bảo vệ đất nông nghiệp trồng lúa nước theo quy hoạch sử dụng đất cấp xã",
+    "toan-trinh": "Toàn trình",
+    "mot-phan": "Một phần",
+    "thoi-han": "15 ngày làm việc",
+    "phi": "Lệ phí: 50.000 đồng",
+    "dang-mo": "Đang trong giờ làm việc",
+    "da-dong": "Ngoài giờ làm việc",
+    "khung-hep": "Khung hẹp 200 px (nhãn không tràn khung)"
+  },
+  "danh-sach": {
+    "tieu-de": "Ô tìm, chip, chuyển dạng, danh sách",
+    "o-tim": "Tìm thủ tục",
+    "goi-y-tim": "Gõ tên thủ tục, ví dụ: khai sinh",
+    "chip": "Lĩnh vực",
+    "tat-ca": "Tất cả",
+    "bang": "Danh sách thủ tục mẫu",
+    "doi-tuong": "thủ tục",
+    "stt": "STT",
+    "ma": "Mã",
+    "ten": "Tên thủ tục",
+    "linh-vuc": "Lĩnh vực",
+    "muc-do": "Mức độ",
+    "xem": "Xem chi tiết",
+    "ket-qua": "{{so}} thủ tục",
+    "trang-url": "Trạng thái trên địa chỉ: từ khoá, lĩnh vực và số trang nằm trong địa chỉ trang này."
+  },
+  "chon-tab": {
+    "tieu-de": "Ô chọn và tab",
+    "o-chon": "Ô chọn (nhãn ẩn, đọc bằng trình đọc màn hình)",
+    "nhan-linh-vuc": "Lĩnh vực",
+    "tat-ca": "Tất cả lĩnh vực",
+    "linh-vuc-dai": "Quản lý, sử dụng và bảo vệ đất nông nghiệp trồng lúa nước theo quy hoạch sử dụng đất cấp xã ({{so}})",
+    "o-chon-nhan-hien": "Ô chọn có nhãn hiện",
+    "nhan-muc-do": "Mức độ",
+    "tat-ca-muc-do": "Tất cả mức độ",
+    "khung-hep": "Khung hẹp 200 px: nhãn dài bị cắt bằng dấu …, không tràn khung",
+    "da-chon": "Đang chọn: {{giaTri}}",
+    "tab-tieu-de": "Tab (← → Home End; hai tab chia đều dưới 600 px)",
+    "tab-nhan": "Danh mục thử",
+    "tab-xa": "Thủ tục cấp xã",
+    "tab-tinh": "Thủ tục cấp tỉnh",
+    "tab-noi-dung-xa": "Nội dung của tab cấp xã.",
+    "tab-noi-dung-tinh": "Nội dung của tab cấp tỉnh."
+  },
+  "tim-1000": {
+    "tieu-de": "Tìm 1.000 mục",
+    "tong": "{{so}} mục",
+    "o-tim": "Tìm trong 1.000 thủ tục mẫu",
+    "goi-y": "Gõ thử: đăng ký khai sinh",
+    "ket-qua": "{{so}} mục khớp",
+    "ghi-chu": "Chỉ hiện {{so}} mục đầu; bộ lọc chạy trên đủ 1.000 mục. Dùng để đo tốc độ ô tìm (AC-25)."
+  },
+  "phan-trang": {
+    "tieu-de": "Phân trang (20 trang)",
+    "dang-o": "Đang ở trang {{trang}}"
+  },
+  "popup": {
+    "tieu-de": "Popup",
+    "mo": "Mở popup",
+    "tieu-de-popup": "Đăng ký khai sinh",
+    "nhan-popup": "Hộ tịch",
+    "mo-popup-trong": "Mở popup thứ hai bên trong",
+    "tieu-de-trong": "Popup lồng nhau",
+    "noi-dung-trong": "Nhấn Esc: chỉ popup này đóng.",
+    "chan": "Xem và nộp trên Cổng DVC",
+    "nut-gia": "Chỉ để thử vòng Tab",
+    "ghi-chu": "Ở chế độ kiosk có một nút giả (bên ngoài popup, con trực tiếp của body, có data-ngoai-popup). Khi popup mở, Tab phải đi vòng gồm cả nút này.",
+    "o-nhap": "Ô nhập trong popup"
+  },
+  "trang-thai": {
+    "tieu-de": "Trạng thái",
+    "skeleton": "Khung chờ",
+    "the": "Dạng thẻ",
+    "bang": "Dạng bảng",
+    "dong": "Dạng dòng",
+    "o": "Dạng ô dịch vụ",
+    "loi": "Lỗi tải",
+    "mat-ket-noi": "Mất kết nối",
+    "qua-nhieu": "Quá nhiều yêu cầu",
+    "he-thong": "Lỗi hệ thống (có mã tra cứu)",
+    "rong": "Không có kết quả",
+    "rong-tu-khoa-chip": "Có từ khoá và bộ lọc, nút Xoá bộ lọc trong thông báo",
+    "rong-nut-tren-thanh": "Nút Xoá bộ lọc nằm trên thanh lọc (như danh mục)",
+    "rong-chi-loc": "Chỉ có bộ lọc",
+    "rong-khong-dieu-kien": "Không từ khoá, không lọc",
+    "rong-html": "Từ khoá có thẻ HTML",
+    "danh-sach-rong": "Danh sách luôn rỗng có ô tìm",
+    "o-tim-rong": "Tìm trong danh sách rỗng",
+    "da-xoa": "Đã bấm Xoá bộ lọc {{so}} lần"
+  },
+  "nut-noi": {
+    "tieu-de": "Nút nổi",
+    "chu": "Trợ lý",
+    "mo-ta": "Nút nổi nằm ở góc phải bên dưới màn hình; bấm để bật/tắt khung giả."
+  },
+  "lien-he": {
+    "tieu-de": "Liên hệ",
+    "mo-ta": "Số điện thoại mẫu lấy từ LienHeProvider, dùng trong thông báo lỗi và không có kết quả."
+  }
+}

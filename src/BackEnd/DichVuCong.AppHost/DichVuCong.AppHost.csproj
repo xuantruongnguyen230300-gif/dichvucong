@@ -1,0 +1,22 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.6.1">
+
+  <!-- Chỉ dùng ở máy dev: chạy Api + Vite dưới một lệnh, có dashboard. Không publish, không đưa vào bản triển khai. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPublishable>false</IsPublishable>
+    <!-- Như mẫu của Aspire 13.6.1: bật gói CLI bundle (không bật thì ASPIRE010 và cảnh báo là lỗi). -->
+    <AspireUseCliBundle>true</AspireUseCliBundle>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Một chiều: AppHost -> Api. Api không tham chiếu AppHost. -->
+    <ProjectReference Include="..\DichVuCong.Api\DichVuCong.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.JavaScript" />
+    <!-- Nâng phụ thuộc gián tiếp của Aspire.Hosting lên bản đã vá lỗ hổng (xem Directory.Packages.props). -->
+    <PackageReference Include="MessagePack" />
+  </ItemGroup>
+
+</Project>

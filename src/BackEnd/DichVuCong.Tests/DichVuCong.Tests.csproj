@@ -9,6 +9,8 @@
   <ItemGroup>
     <ProjectReference Include="..\DichVuCong.Api\DichVuCong.Api.csproj" />
     <ProjectReference Include="..\DichVuCong.Data\DichVuCong.Data.csproj" />
+    <ProjectReference Include="..\DichVuCong.Import\DichVuCong.Import.csproj" />
+    <ProjectReference Include="..\DichVuCong.DuLieuMau\DichVuCong.DuLieuMau.csproj" />
   </ItemGroup>
 
   <ItemGroup>

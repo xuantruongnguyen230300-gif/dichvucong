@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Công cụ cho lập trình viên: sinh bản đầu của dữ liệu thật (4 file Excel) từ data-mau/*.json. Không publish. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPublishable>false</IsPublishable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DichVuCong.Import\DichVuCong.Import.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DichVuCong.Tests" />
+  </ItemGroup>
+
+</Project>

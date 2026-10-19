@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HuongDan" xml:space="preserve">
+    <value>Công cụ nhập dữ liệu Excel vào PostgreSQL
+
+Cách dùng:
+  dotnet run --project src/BackEnd/DichVuCong.Import -- &lt;lệnh&gt;
+
+Lệnh:
+  nhap thu-tuc   &lt;file.xlsx&gt; [--chi-kiem]   nhập danh mục thủ tục, thường gặp và chi tiết
+  nhap phan-cong &lt;file.xlsx&gt; [--chi-kiem]   nhập phân công lĩnh vực, nhân sự
+  nhap trung-tam &lt;file.xlsx&gt; [--chi-kiem]   nhập thông tin trung tâm, giờ làm việc, liên kết, ô dịch vụ
+  nhap tro-ly    &lt;file.xlsx&gt; [--chi-kiem]   nhập câu hỏi mẫu, chủ đề gợi ý, từ đồng nghĩa, viết tắt
+  nhap tat-ca    &lt;thư-mục&gt;  [--chi-kiem]   nhập đủ 4 file thu-tuc, phan-cong, trung-tam, tro-ly (.xlsx) trong thư mục
+  xuat cau-chua-tra-loi &lt;file-ra.xlsx&gt;     xuất các câu trợ lý chưa trả lời được
+  tao-mau &lt;thư-mục&gt;                        tạo 4 file Excel mẫu
+  help                                      in hướng dẫn này
+
+  --chi-kiem: chỉ kiểm file, không ghi gì vào cơ sở dữ liệu.
+
+Chuỗi kết nối: khoá ConnectionStrings:DichVuCong, lấy từ user-secrets "dichvucong"
+hoặc biến môi trường ConnectionStrings__DichVuCong.
+
+Mã thoát:
+  0  thành công
+  1  file có lỗi, không ghi gì
+  2  sai lệnh, sai tham số hoặc không đọc được file
+  3  lỗi cấu hình hoặc cơ sở dữ liệu</value>
+  </data>
+  <data name="LoiLenhLa" xml:space="preserve">
+    <value>Lệnh không hợp lệ: "{0}". Chạy "help" để xem danh sách lệnh.</value>
+  </data>
+  <data name="LoiThieuThamSo" xml:space="preserve">
+    <value>Lệnh "{0}" thiếu tham số. Chạy "help" để xem cách dùng.</value>
+  </data>
+  <data name="LoiThamSoThua" xml:space="preserve">
+    <value>Tham số không hợp lệ: "{0}". Chạy "help" để xem cách dùng.</value>
+  </data>
+  <data name="LoiLoaiDuLieu" xml:space="preserve">
+    <value>Loại dữ liệu không hợp lệ: "{0}". Chọn một trong: thu-tuc, phan-cong, trung-tam, tro-ly, tat-ca.</value>
+  </data>
+  <data name="LoiThieuChuoiKetNoi" xml:space="preserve">
+    <value>Thiếu chuỗi kết nối. Hãy cấu hình khoá {0} (user-secrets hoặc biến môi trường).</value>
+  </data>
+  <data name="LoiChuaCaiDat" xml:space="preserve">
+    <value>Lệnh "{0}" chưa được cài đặt.</value>
+  </data>
+  <data name="LoiFileKhongTim" xml:space="preserve">
+    <value>Không tìm thấy file "{0}".</value>
+  </data>
+  <data name="LoiFileDuoi" xml:space="preserve">
+    <value>File "{0}" không phải .xlsx. Chỉ nhận file .xlsx (không nhận .xls, .xlsm).</value>
+  </data>
+  <data name="LoiFileLon" xml:space="preserve">
+    <value>File "{0}" lớn hơn {1} MB.</value>
+  </data>
+  <data name="LoiFileGiaiNenLon" xml:space="preserve">
+    <value>File "{0}" giải nén ra lớn hơn {1} MB, không nhận.</value>
+  </data>
+  <data name="LoiFileKhongMo" xml:space="preserve">
+    <value>Không mở được file "{0}". File hỏng hoặc không phải file Excel.</value>
+  </data>
+  <data name="LoiThuMucKhongTim" xml:space="preserve">
+    <value>Không tìm thấy thư mục "{0}".</value>
+  </data>
+  <data name="LoiThieuFileTrongThuMuc" xml:space="preserve">
+    <value>Thư mục "{0}" thiếu file "{1}".</value>
+  </data>
+  <data name="LoiFileRaDaCo" xml:space="preserve">
+    <value>File "{0}" đã tồn tại, không ghi đè. Hãy chọn tên khác.</value>
+  </data>
+  <data name="LoiFileRaDuoi" xml:space="preserve">
+    <value>File ra "{0}" phải có đuôi .xlsx.</value>
+  </data>
+  <data name="LoiMauDaCo" xml:space="preserve">
+    <value>File "{0}" đã tồn tại, không ghi đè. Hãy chọn thư mục khác.</value>
+  </data>
+  <data name="CauTrucQuaNhieuDong" xml:space="preserve">
+    <value>có hơn {0} dòng</value>
+  </data>
+  <data name="CauTrucThieuSheet" xml:space="preserve">
+    <value>thiếu sheet "{0}"</value>
+  </data>
+  <data name="CauTrucThieuCot" xml:space="preserve">
+    <value>thiếu cột {0}</value>
+  </data>
+  <data name="CauTrucCotLa" xml:space="preserve">
+    <value>cột "{0}" không có trong mẫu</value>
+  </data>
+  <data name="CauTrucCotTrung" xml:space="preserve">
+    <value>cột "{0}" xuất hiện nhiều lần</value>
+  </data>
+  <data name="OThieu" xml:space="preserve">
+    <value>thiếu {0}</value>
+  </data>
+  <data name="OQuaDai" xml:space="preserve">
+    <value>{0} dài quá {1} ký tự</value>
+  </data>
+  <data name="OMaSo" xml:space="preserve">
+    <value>{0} đang là ô số, hãy nhập dạng chữ</value>
+  </data>
+  <data name="OCongThuc" xml:space="preserve">
+    <value>{0} có lỗi công thức ({1})</value>
+  </data>
+  <data name="ODanhDau" xml:space="preserve">
+    <value>{0} "{1}" không hợp lệ, chỉ nhận "x" hoặc để trống</value>
+  </data>
+  <data name="OLuaChon" xml:space="preserve">
+    <value>{0} "{1}" không hợp lệ, chọn một trong: {2}</value>
+  </data>
+  <data name="OSoDuong" xml:space="preserve">
+    <value>{0} "{1}" không phải số nguyên dương</value>
+  </data>
+  <data name="OSoKhongAm" xml:space="preserve">
+    <value>{0} "{1}" không phải số nguyên từ 0 trở lên</value>
+  </data>
+  <data name="OGio" xml:space="preserve">
+    <value>{0} "{1}" không đúng dạng HH:mm</value>
+  </data>
+  <data name="OUrl" xml:space="preserve">
+    <value>{0} "{1}" không phải địa chỉ http hoặc https hợp lệ</value>
+  </data>
+  <data name="OEmail" xml:space="preserve">
+    <value>{0} "{1}" không phải email hợp lệ</value>
+  </data>
+  <data name="ODienThoai" xml:space="preserve">
+    <value>{0} "{1}" không phải số điện thoại hợp lệ</value>
+  </data>
+  <data name="LoiTrung" xml:space="preserve">
+    <value>{0} "{1}" trùng với dòng {2}</value>
+  </data>
+  <data name="LoiDanhMuc" xml:space="preserve">
+    <value>phải đánh dấu "x" ít nhất một trong hai cột danh mục</value>
+  </data>
+  <data name="LoiKhongCoChuSo" xml:space="preserve">
+    <value>{0} không có chữ hay số nào</value>
+  </data>
+  <data name="LoiMaKhongCo" xml:space="preserve">
+    <value>Mã {0} không có trong sheet Thủ tục</value>
+  </data>
+  <data name="LoiCanItNhatMot" xml:space="preserve">
+    <value>cần có giá trị ở ít nhất một trong các cột: {0}</value>
+  </data>
+  <data name="LoiGioThieuDoi" xml:space="preserve">
+    <value>{0}: phải ghi đủ cả giờ bắt đầu và giờ kết thúc</value>
+  </data>
+  <data name="LoiGioNguoc" xml:space="preserve">
+    <value>{0}: giờ bắt đầu phải trước giờ kết thúc</value>
+  </data>
+  <data name="LoiThuKhongHopLe" xml:space="preserve">
+    <value>Thứ "{0}" không hợp lệ</value>
+  </data>
+  <data name="LoiMucLa" xml:space="preserve">
+    <value>mục "{0}" không có trong danh sách mục của sheet Trung tâm</value>
+  </data>
+  <data name="LoiThieuMuc" xml:space="preserve">
+    <value>thiếu mục "{0}"</value>
+  </data>
+  <data name="LoiCauHoiBR12" xml:space="preserve">
+    <value>phải có đúng một trong hai: Câu trả lời hoặc Mục thông tin Trung tâm</value>
+  </data>
+  <data name="LoiMaThuTucLienQuan" xml:space="preserve">
+    <value>Mã thủ tục liên quan {0} không có trong danh mục thủ tục</value>
+  </data>
+  <data name="KetQuaKhongNhap" xml:space="preserve">
+    <value>Không nhập. File {0} có {1} dòng lỗi:</value>
+  </data>
+  <data name="KetQuaLoiCoDong" xml:space="preserve">
+    <value>  {0} · dòng {1}: {2}</value>
+  </data>
+  <data name="KetQuaLoiKhongDong" xml:space="preserve">
+    <value>  {0}: {1}</value>
+  </data>
+  <data name="KetQuaKhongNhapTatCa" xml:space="preserve">
+    <value>Không nhập gì vào cơ sở dữ liệu.</value>
+  </data>
+  <data name="KetQuaDaNhap" xml:space="preserve">
+    <value>Đã nhập {0}:</value>
+  </data>
+  <data name="KetQuaHopLe" xml:space="preserve">
+    <value>File {0} hợp lệ, sẽ nhập:</value>
+  </data>
+  <data name="KetQuaCanhBao" xml:space="preserve">
+    <value>Cảnh báo:</value>
+  </data>
+  <data name="KetQuaDongCanhBao" xml:space="preserve">
+    <value>  {0}</value>
+  </data>
+  <data name="TomTatThuTuc" xml:space="preserve">
+    <value>  Thủ tục: {0} — cấp xã {1}, cấp tỉnh {2}</value>
+  </data>
+  <data name="TomTatLinhVucThuongGap" xml:space="preserve">
+    <value>  Lĩnh vực: {0} · Thường gặp: {1}</value>
+  </data>
+  <data name="TomTatPhanCong" xml:space="preserve">
+    <value>  Phân công: {0} · Nhân sự: {1}</value>
+  </data>
+  <data name="TomTatTrungTam" xml:space="preserve">
+    <value>  Trung tâm: {0} · Giờ làm việc: {1} ngày · Liên kết: {2} · Ô dịch vụ: {3}</value>
+  </data>
+  <data name="TomTatTroLy" xml:space="preserve">
+    <value>  Câu hỏi mẫu: {0} ({1} câu theo mục thông tin Trung tâm) · Chủ đề gợi ý: {2} · Từ đồng nghĩa: {3} · Viết tắt: {4}</value>
+  </data>
+  <data name="KetQuaXuat" xml:space="preserve">
+    <value>Đã xuất {0} câu chưa trả lời ra {1}.</value>
+  </data>
+  <data name="KetQuaTaoMau" xml:space="preserve">
+    <value>Đã tạo file mẫu: {0}</value>
+  </data>
+  <data name="CanhBaoThoiHanKhac" xml:space="preserve">
+    <value>Thủ tục: {0} thủ tục có thời hạn giải quyết chỉ ghi "Khác" — dòng {1}</value>
+  </data>
+  <data name="CanhBaoLinhVucGop" xml:space="preserve">
+    <value>Lĩnh vực: "{0}" và "{1}" cùng mã "{2}", gộp thành một (lấy tên gặp trước)</value>
+  </data>
+  <data name="CanhBaoPhanCongLinhVuc" xml:space="preserve">
+    <value>Phân công: lĩnh vực "{0}" (dòng {1}) không có trong danh mục thủ tục</value>
+  </data>
+  <data name="CanhBaoChuDeLinhVuc" xml:space="preserve">
+    <value>Chủ đề gợi ý: lĩnh vực "{0}" (dòng {1}) không có trong danh mục thủ tục</value>
+  </data>
+  <data name="CanhBaoThieuCongDvc" xml:space="preserve">
+    <value>Liên kết: không có liên kết tên "Cổng Dịch vụ công Quốc gia"; trợ lý chưa trả lời được câu "nộp trực tuyến ở đâu"</value>
+  </data>
+  <data name="LoiMigrationChuaChay" xml:space="preserve">
+    <value>Cơ sở dữ liệu còn migration chưa chạy. Hãy chạy "dotnet ef database update" trước.</value>
+  </data>
+  <data name="LoiDangCoLanNhapKhac" xml:space="preserve">
+    <value>Đang có một lần nhập khác chạy. Hãy thử lại sau.</value>
+  </data>
+  <data name="LoiKhongKetNoi" xml:space="preserve">
+    <value>Không kết nối được cơ sở dữ liệu.</value>
+  </data>
+  <data name="LoiGhiDuLieu" xml:space="preserve">
+    <value>Lỗi khi ghi cơ sở dữ liệu, đã hoàn tác, dữ liệu cũ giữ nguyên.</value>
+  </data>
+  <data name="LoiBiHuy" xml:space="preserve">
+    <value>Đã dừng theo yêu cầu, dữ liệu cũ giữ nguyên.</value>
+  </data>
+  <data name="XuatCotCauHoi" xml:space="preserve">
+    <value>Câu hỏi</value>
+  </data>
+  <data name="XuatCotSoLanGap" xml:space="preserve">
+    <value>Số lần gặp</value>
+  </data>
+  <data name="XuatCotLanGapCuoi" xml:space="preserve">
+    <value>Lần gặp cuối</value>
+  </data>
+  <data name="XuatTenSheet" xml:space="preserve">
+    <value>Câu chưa trả lời</value>
+  </data>
+  <data name="HuongDanTieuDe" xml:space="preserve">
+    <value>Hướng dẫn nhập file {0}</value>
+  </data>
+  <data name="HuongDanChung" xml:space="preserve">
+    <value>Dòng 1 là tiêu đề cột; dữ liệu từ dòng 2. Không đổi tên sheet và tên cột. Cột "Ghi chú" (nếu thêm) bị bỏ qua.
+Cột chữ đã đặt định dạng Text. Mã thủ tục, mã DVC, điện thoại phải là chữ, không phải số (Excel hay làm mất số 0 hoặc đổi 1.013980 thành 1,01398).
+Cột đánh dấu: gõ x hoặc để trống. Danh sách trong một ô: phân cách bằng dấu chấm phẩy (;) hoặc xuống dòng.
+Thứ tự hiển thị là thứ tự dòng. Dòng trống bị bỏ qua. Chỉ nhận file .xlsx, tối đa 20 MB.</value>
+  </data>
+  <data name="HuongDanThuTuc" xml:space="preserve">
+    <value>Sheet Thủ tục: mỗi mã thủ tục một dòng; đánh dấu x ở "Danh mục cấp xã" và/hoặc "Danh mục cấp tỉnh" (ít nhất một). Mức độ: Toàn trình hoặc Một phần.
+Sheet Thường gặp: mã thủ tục và thứ tự hiển thị (số nguyên dương, không trùng).
+Sheet Trình tự, Cách thức, Thành phần hồ sơ, Kết quả, Căn cứ pháp lý: cột đầu là mã thủ tục có trong sheet Thủ tục. Số bản chính, số bản sao: số nguyên từ 0 hoặc để trống; không có số nào lớn hơn 0 thì coi như chưa ghi.</value>
+  </data>
+  <data name="HuongDanPhanCong" xml:space="preserve">
+    <value>Sheet Phân công: mỗi lĩnh vực một dòng, Quầy là số nguyên dương hoặc để trống (chưa có quầy). Sheet Nhân sự: họ tên bắt buộc, Quầy là số nguyên dương hoặc để trống.
+Cả hai sheet được để trống hoàn toàn (chỉ có dòng tiêu đề).</value>
+  </data>
+  <data name="HuongDanTrungTam" xml:space="preserve">
+    <value>Sheet Trung tâm: mỗi mục một dòng. Bắt buộc: Tên đơn vị, Người chịu trách nhiệm, Địa chỉ, Điện thoại, Email.
+Sheet Giờ làm việc: 7 dòng, mỗi thứ một dòng; ngày nghỉ để trống giờ. Giờ dạng HH:mm, ghi cả giờ bắt đầu và giờ kết thúc của buổi.
+Sheet Liên kết: liên kết hữu ích ở chân trang; liên kết tên "Cổng Dịch vụ công Quốc gia" được trợ lý dùng.
+Sheet Ô dịch vụ: Địa chỉ web được để trống (ô hiện nhưng chưa bấm được); có ghi thì phải bắt đầu bằng http:// hoặc https://. Biểu tượng chọn trong danh sách.</value>
+  </data>
+  <data name="HuongDanTroLy" xml:space="preserve">
+    <value>Sheet Câu hỏi mẫu: mỗi câu cần đúng một trong hai: Câu trả lời, hoặc Mục thông tin Trung tâm (trợ lý đọc giá trị từ sheet Trung tâm lúc trả lời).
+Sheet Chủ đề gợi ý: tên hiển thị và tên lĩnh vực đúng như trong danh mục thủ tục.
+Sheet Từ đồng nghĩa, Viết tắt: không trùng nhau sau khi bỏ dấu và chữ hoa.</value>
+  </data>
+</root>

@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <UserSecretsId>dichvucong</UserSecretsId>
+    <!-- File XML tài liệu chỉ để analyzer (IDE0005) kiểm lúc build; không đưa vào bản publish (của Api lẫn của project tham chiếu). -->
+    <PublishDocumentationFile>false</PublishDocumentationFile>
+    <PublishReferencesDocumentationFiles>false</PublishReferencesDocumentationFiles>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +13,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <!-- Swagger UI chỉ cho máy dev (Development). Bản Release/publish không nhận tệp nào của gói: mã dùng nó nằm trong #if DEBUG
+         (Common/Hosting/SwaggerUiExtensions.cs). Dùng ExcludeAssets thay vì bỏ hẳn tham chiếu để đồ thị restore (và packages.lock.json)
+         không đổi giữa Debug và Release. -->
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Condition="'$(Configuration)' != 'Release'" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" ExcludeAssets="all" Condition="'$(Configuration)' == 'Release'" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
   </ItemGroup>

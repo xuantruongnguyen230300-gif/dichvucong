@@ -3,6 +3,10 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <UserSecretsId>dichvucong</UserSecretsId>
+    <NeutralLanguage>vi</NeutralLanguage>
+    <!-- File XML tài liệu chỉ để analyzer (IDE0005) kiểm lúc build; không đưa vào bản publish (của project này lẫn project tham chiếu). -->
+    <PublishDocumentationFile>false</PublishDocumentationFile>
+    <PublishReferencesDocumentationFiles>false</PublishReferencesDocumentationFiles>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,7 +14,26 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ClosedXML" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DichVuCong.Tests" />
+    <InternalsVisibleTo Include="DichVuCong.DuLieuMau" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\ThongBao.resx"
+                      Generator="ResXFileCodeGenerator"
+                      StronglyTypedFileName="$(IntermediateOutputPath)ThongBao.Designer.cs"
+                      StronglyTypedLanguage="CSharp"
+                      StronglyTypedNamespace="DichVuCong.Import.Resources"
+                      StronglyTypedClassName="ThongBao" />
   </ItemGroup>
 
 </Project>

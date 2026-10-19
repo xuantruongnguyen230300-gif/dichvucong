@@ -1,9 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <!-- File XML tài liệu chỉ để analyzer (IDE0005) kiểm lúc build; không đưa vào bản publish (của project này lẫn project tham chiếu). -->
+    <PublishDocumentationFile>false</PublishDocumentationFile>
+    <PublishReferencesDocumentationFiles>false</PublishReferencesDocumentationFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DichVuCong.Tests" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="EFCore.NamingConventions" />
+  </ItemGroup>
+
+  <!-- File dữ liệu mẫu cho nguồn Mẫu (plan F00 §9.5). LogicalName phải khớp TepDuLieuMau.TenTaiNguyen. Sinh lại bằng DichVuCong.DuLieuMau xuat-json. -->
+  <ItemGroup>
+    <EmbeddedResource Include="Mau\du-lieu-mau.json" LogicalName="DichVuCong.Data.Mau.du-lieu-mau.json" />
   </ItemGroup>
 
 </Project>

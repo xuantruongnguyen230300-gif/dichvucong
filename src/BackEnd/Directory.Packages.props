@@ -15,8 +15,23 @@
     <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.12" />
   </ItemGroup>
 
+  <ItemGroup Label="Swagger UI (chỉ Development)">
+    <!-- Chỉ giao diện Swagger UI trỏ vào /openapi/v1.json của Microsoft.AspNetCore.OpenApi; KHÔNG dùng SwaggerGen (bộ sinh tài liệu thứ hai). -->
+    <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.3.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Chạy ở máy dev">
+    <!-- AppHost chạy Api + Vite dưới một lệnh, có dashboard (chỉ DichVuCong.AppHost; không vào bản publish). Không dùng ServiceDefaults.
+         Aspire.Hosting.JavaScript thay cho Aspire.Hosting.NodeJs (AddViteApp). Cùng phiên bản với Aspire.AppHost.Sdk trong DichVuCong.AppHost.csproj. -->
+    <PackageVersion Include="Aspire.Hosting.JavaScript" Version="13.6.1" />
+    <!-- Aspire.Hosting kéo MessagePack 2.5.302 (GHSA-qhrr-8q5h-9q3h, mức vừa, vá ở 2.5.303; NU1902 là lỗi vì cảnh báo = lỗi). Ghim lên bản vá cùng nhánh 2.x, chỉ trong AppHost (dev). Bỏ khi Aspire nâng phụ thuộc. -->
+    <PackageVersion Include="MessagePack" Version="2.5.307" />
+  </ItemGroup>
+
   <ItemGroup Label="Công cụ nhập">
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+    <!-- Đọc/ghi .xlsx: MIT, đọc và ghi cùng một thư viện, biết kiểu ô, đặt được định dạng Text và danh sách chọn. Chỉ Import tham chiếu. SixLabors.Fonts 1.x (Apache-2.0) đi kèm gián tiếp. -->
+    <PackageVersion Include="ClosedXML" Version="0.105.1" />
   </ItemGroup>
 
   <ItemGroup Label="Test">

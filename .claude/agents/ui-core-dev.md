@@ -22,7 +22,7 @@ Bạn giữ lõi frontend (đọc `CLAUDE.md` trước).
   - Feature không import TanStack trực tiếp. Muốn đổi thư viện grid (vd. sang KendoReact) thì chỉ sửa trong `core/`.
 - Trợ năng cơ bản:
   - Phần tử bấm được là `button` hoặc `a` thật; nút chỉ có icon thì có `aria-label`.
-  - Nút ≥ 44px, dùng được bằng bàn phím.
+  - Kích thước (chữ, nút, khoảng cách) theo `.specify/design-system.md` — chuẩn Vàm Cỏ: nút và ô nhập cao `--control-height` (34px, kiosk 48px). Dùng được bằng bàn phím.
 - Màu, cỡ chữ, khoảng cách lấy từ biến CSS trong `styles/tokens.css`.
 - Đổi API của component đang dùng → tìm mọi chỗ dùng và sửa theo trong cùng lần.
 

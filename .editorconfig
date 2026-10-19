@@ -46,6 +46,7 @@ dotnet_naming_symbols.private_fields.applicable_accessibilities = private
 dotnet_naming_style.underscore_camel.capitalization = camel_case
 dotnet_naming_style.underscore_camel.required_prefix = _
 
-# Migration do EF sinh ra — không áp quy tắc định dạng
+# Migration do EF sinh ra — không áp quy tắc định dạng, giữ nguyên BOM do công cụ ghi
 [**/Migrations/*.cs]
 generated_code = true
+charset = utf-8-bom

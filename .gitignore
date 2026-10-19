@@ -23,6 +23,7 @@ test-results/
 
 # Dữ liệu mẫu chỉ dùng local
 data-mau/
+.specify/prototype/du-lieu-mau.js
 
 # OS / editor
 .DS_Store

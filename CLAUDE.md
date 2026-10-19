@@ -16,7 +16,7 @@ Gặp chỗ chưa rõ hoặc phải chọn giữa nhiều cách mà tài liệu 
 | Phần | Chọn |
 |---|---|
 | Backend | ASP.NET Core Web API (.NET 10 LTS), controller, chia thư mục theo tính năng |
-| Dữ liệu | PostgreSQL 18, EF Core + Npgsql, extension `unaccent` + `pg_trgm` |
+| Dữ liệu | PostgreSQL 18, EF Core + Npgsql, extension `unaccent` + `pg_trgm`. Thêm nguồn **Mẫu** (nạp file dữ liệu mẫu vào bộ nhớ, không cần DB) cho demo — đổi nguồn bằng cấu hình, cách làm ở `specs/F00-khung-he-thong/plan.md` |
 | Frontend | React 19 + Vite + TypeScript, React Router, TanStack Query, CSS Modules |
 | Grid | TanStack Table — chỉ dùng qua `core/components/DataTable` |
 | Test | xUnit v3 (BE), Vitest (FE), Playwright (E2E) |
@@ -50,18 +50,21 @@ src/
       Common/                     # Hosting, Security, Errors, RateLimiting, Caching
       Features/<TinhNang>/        # Controller + Service + Dtos theo từng tính năng
         Chatbot/
+    DichVuCong.AppHost/           # .NET Aspire chỉ dùng ở dev: chạy Api + Vite + dashboard bằng một lệnh (không ServiceDefaults)
     DichVuCong.Import/            # console: Excel → PostgreSQL
+    DichVuCong.DuLieuMau/         # console chỉ dùng ở dev: data-mau/*.json → file Excel đúng mẫu (bản đầu dữ liệu thật)
     DichVuCong.Tests/             # xUnit — Data/ (db-dev), Integration/ (tester), còn lại backend-dev
   FrontEnd/
     src/
       app/                        # router, layout, providers
       core/                       # LÕI DÙNG CHUNG — không biết nghiệp vụ
+        i18n/                     # cấu hình react-i18next + vi/common.json
         components/               # DataTable, Modal, Card, Chip, SearchBox, Pager, Badge…
         hooks/                    # useDebounce, useUrlState…
         api/                      # API client có kiểu
         utils/                    # tiengViet.ts (boDau, chuanHoaTimKiem), format…
         styles/                   # tokens.css (màu, cỡ chữ, khoảng cách)
-      features/<tinh-nang>/       # màn hình ghép từ core/
+      features/<tinh-nang>/       # màn hình ghép từ core/; i18n/vi.json = câu chữ của tính năng
         chatbot/
     e2e/                          # Playwright
 data-mau/                         # dữ liệu mẫu chỉ dùng local — không commit
@@ -79,9 +82,9 @@ Phụ thuộc chỉ một chiều:
 | 1 | `ba-analyst` | `.specify/nghiep-vu/`, `specs/*/spec.md` |
 | 2 | `ba-reviewer` | `trang_thai` trong spec.md |
 | 3 | `planner` | `plan.md`, `tasks.md` |
-| 4 | `db-dev` | `DichVuCong.Data/`, `DichVuCong.Import/`, `DichVuCong.Tests/Data/` |
-| 5 | `backend-dev` | `DichVuCong.Api/` (trừ `Features/Chatbot/`), `DichVuCong.Tests/` (trừ `Data/`, `Integration/`) |
-| 5 | `chatbot-dev` | `Features/Chatbot/`, `src/FrontEnd/src/features/chatbot/` |
+| 4 | `db-dev` | `DichVuCong.Data/`, `DichVuCong.Import/`, `DichVuCong.DuLieuMau/`, `DichVuCong.Tests/Data/` |
+| 5 | `backend-dev` | `DichVuCong.Api/` (trừ `Features/Chatbot/`), `DichVuCong.AppHost/`, `DichVuCong.Tests/` (trừ `Data/`, `Integration/`, `Api/Chatbot/`) |
+| 5 | `chatbot-dev` | `Features/Chatbot/`, `DichVuCong.Tests/Api/Chatbot/`, `src/FrontEnd/src/features/chatbot/` |
 | 6 | `ui-core-dev` | `src/FrontEnd/src/core/`, `app/`, cấu hình build FE |
 | 7 | `frontend-dev` | `src/FrontEnd/src/features/*` (trừ chatbot) |
 | 8 | `code-reviewer` | `result/review.md` |
@@ -110,6 +113,11 @@ Repo chỉ dùng 10 agent ở trên. Các plugin VNR (vnr-bakit, vnr-scc-devkit,
 - Tên theo nghiệp vụ, tiếng Việt không dấu: `ThuTuc`, `LinhVuc`, `Quay`, `NhanSu`, `CauHoiMau`.
 - C# PascalCase · bảng/cột DB snake_case · JSON camelCase · route kebab-case (`/api/thu-tuc`).
 - React: component `PascalCase.tsx`; thư mục feature kebab-case.
+- **Không viết cứng câu chữ hiển thị cho người dùng trong code — dùng i18n** (quyết định 2026-10-08):
+  - FE: react-i18next, file ngôn ngữ đóng gói khi build. Mỗi tính năng một namespace, file đặt cạnh tính năng (`features/<x>/i18n/vi.json`); chuỗi dùng chung ở `core/i18n/vi/common.json`. Khoá có kiểu TypeScript — gõ sai khoá là lỗi build. Mọi chuỗi giao diện (nhãn, nút, thông báo, placeholder, `aria-label`, tiêu đề trang) đi qua `t()`.
+  - BE: lỗi trả mã lỗi (`code` trong ProblemDetails, danh mục mã ở `Common/Errors`); FE hiển thị câu theo mã. Câu trả lời của trợ lý trả dạng cấu trúc; câu khuôn mẫu nằm ở file ngôn ngữ FE; nội dung riêng (câu hỏi mẫu, dữ liệu thủ tục) lấy từ DB.
+  - Công cụ nhập (Import): thông báo cho người vận hành đặt trong file tài nguyên `.resx`.
+  - Không áp cho log và lỗi cấu hình dành cho lập trình viên.
 - `.editorconfig` là chuẩn định dạng; build C# coi cảnh báo là lỗi — sửa gốc rễ, không tắt cảnh báo cho qua. Buộc phải tắt thì tắt đúng chỗ và ghi lý do.
 - Thêm gói NuGet/npm: ghi lý do (và kích thước gzip với gói FE) trong plan.md hoặc báo cáo. Version NuGet khai ở `Directory.Packages.props`.
 
@@ -144,10 +152,11 @@ Repo chỉ dùng 10 agent ở trên. Các plugin VNR (vnr-bakit, vnr-scc-devkit,
 
 **Dữ liệu**
 
+- Hai nguồn dữ liệu (quyết định 2026-10-12): **Mẫu** — nạp file dữ liệu mẫu đi kèm bản build vào bộ nhớ, không cần DB, dùng cho demo; **PostgreSQL** — chạy thật. Feature đọc qua lớp nguồn dữ liệu, không gọi thẳng `AppDbContext`, để đổi nguồn chỉ bằng cấu hình.
 - Một tài khoản DB. Máy dev dùng `postgres` local.
 - Chuỗi kết nối `ConnectionStrings:DichVuCong` chỉ nằm ở user-secrets (dev, `UserSecretsId` = `dichvucong`, dùng chung cho Api và Import) hoặc biến môi trường `ConnectionStrings__DichVuCong` (triển khai). Không có trong repo, `appsettings*.json`, bản build, log hay response lỗi.
 - Câu hỏi của người dân có thể chứa số CCCD, số điện thoại, email → che trước khi lưu nhật ký. Log không ghi dữ liệu cá nhân.
-- `data-mau/` là dữ liệu mẫu (lấy từ Vàm Cỏ, đổi tên sang Cần Giuộc) — chỉ dùng local, không commit, không đưa lên môi trường thật.
+- `data-mau/` là dữ liệu nguồn (lấy từ Vàm Cỏ, đổi tên sang Cần Giuộc) — không commit, không đưa nguyên thư mục lên môi trường thật. File dữ liệu mẫu cho nguồn **Mẫu** thì commit: sinh bằng `DichVuCong.DuLieuMau`, đã làm sạch (không phân công, nhân sự, họ tên thật). Bản đầu của dữ liệu thật sinh từ đây bằng `DichVuCong.DuLieuMau` (không có phân công quầy, nhân sự — xem `du-lieu.md`); Trung tâm rà lại rồi mới nhập lên môi trường thật (quyết định 2026-10-12).
 
 **Thư viện**
 
@@ -173,13 +182,27 @@ Cách đạt:
 # Một lần cho máy dev
 dotnet user-secrets set "ConnectionStrings:DichVuCong" "Host=localhost;Port=5432;Database=dichvucong;Username=postgres;Password=postgres" --project src/BackEnd/DichVuCong.Api
 
+# Demo — nguồn Mẫu, không cần PostgreSQL (DuLieu:Nguon=Mau; profile https của Api đã đặt sẵn)
+cd src/FrontEnd && npm ci && npm run build        # một lần, và mỗi khi FE đổi
+dotnet run --project src/BackEnd/DichVuCong.Api   # https://localhost:7157
+# Ở Development chỉ cho phép Host localhost/127.0.0.1 (AllowedHosts); thử bằng IP LAN trên điện thoại thì đặt biến môi trường AllowedHosts. Triển khai: khai AllowedHosts bằng tên miền thật (thiếu thì trang bỏ og:url và DC.identifier).
+# Chạy với PostgreSQL: thêm --launch-profile https-postgresql. Máy đã triển khai: biến môi trường DuLieu__Nguon=Mau|PostgreSql (bắt buộc khai ở Production)
+
+# Chạy bằng .NET Aspire (chỉ dev): Api + Vite (hot reload) + dashboard bằng một lệnh; mặc định nguồn Mẫu
+dotnet run --project src/BackEnd/DichVuCong.AppHost                                      # Api https://localhost:7157 · Vite http://localhost:5173 · dashboard https://localhost:17000 (token in ra console)
+dotnet run --project src/BackEnd/DichVuCong.AppHost --launch-profile https-postgresql    # nguồn PostgreSQL (Api đọc chuỗi kết nối từ user-secrets)
+# Lần đầu cần mạng (Aspire CLI tải qua dnx), khởi động ~30 s. Không có ServiceDefaults/OpenTelemetry (đường dẫn URL có thể chứa dữ liệu cá nhân).
+# Swagger UI: https://localhost:7157/swagger — chỉ Development + bản Debug; bản Release không chứa Swashbuckle. CSP giữ nguyên văn, không nới.
+
 # Backend
 dotnet build src/BackEnd/DichVuCong.sln
-dotnet test  src/BackEnd/DichVuCong.sln
-dotnet ef migrations add <Ten> --project src/BackEnd/DichVuCong.Data --startup-project src/BackEnd/DichVuCong.Api
-dotnet ef database update      --project src/BackEnd/DichVuCong.Data --startup-project src/BackEnd/DichVuCong.Api
+dotnet test --solution src/BackEnd/DichVuCong.sln          # Microsoft.Testing.Platform (global.json); lọc: --filter-namespace
+dotnet ef migrations add <Ten> --project src/BackEnd/DichVuCong.Data --startup-project src/BackEnd/DichVuCong.Api -- --DuLieu:Nguon=PostgreSql
+dotnet ef database update      --project src/BackEnd/DichVuCong.Data --startup-project src/BackEnd/DichVuCong.Api -- --DuLieu:Nguon=PostgreSql
 dotnet run --project src/BackEnd/DichVuCong.Api            # https://localhost:7157
 dotnet run --project src/BackEnd/DichVuCong.Import -- <lệnh>
+# Sinh lại file dữ liệu mẫu cho demo (cần data-mau/)
+dotnet run --project src/BackEnd/DichVuCong.DuLieuMau -- xuat-json data-mau src/BackEnd/DichVuCong.Data/Mau/du-lieu-mau.json --nguoi-chiu-trach-nhiem "(dữ liệu mẫu)"
 
 # Frontend
 cd src/FrontEnd

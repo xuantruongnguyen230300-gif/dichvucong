@@ -1,0 +1,216 @@
+# C01 · Thành phần giao diện dùng chung — tasks
+
+`[P]` = chạy song song được với task liền trước. Mục nhắc tới trong task là của `plan.md`.
+
+C01 thay cho F00 T13. Khi C01 T11 xong, F00 T13 coi như xong.
+
+Điều kiện bắt đầu:
+
+- Làm ngay: T01, T02.
+- T03 sau F00 T21, vì cùng sửa `package.json`, `vite.config.ts`, `common.json`. Cùng một agent nên làm nối tiếp.
+- T04–T10 sau T01 và T03. T11 sau T04–T10.
+- T15 (khối "Tìm 1.000 mục", AC-25) sau T07 và T11; phải xong trước T14.
+- Cần hỏi ở plan §9: làm theo đề xuất — câu 1–4 **đã chấp nhận 2026-10-12** (người dùng không phản đối).
+
+Lưu ý chung cho mọi task ui-core-dev:
+
+- **Ký tự vô hình** (U+200B–U+200F, U+FEFF):
+  - Trong test và dữ liệu mẫu, tạo bằng `String.fromCodePoint(0x200e)`, không dán ký tự thật.
+  - Công cụ Edit có thể đổi escape Unicode thành ký tự thật. Sau khi ghi, tìm lại bằng `LC_ALL=C.UTF-8 grep -nP "[\x{200B}-\x{200F}\x{FEFF}]" <tệp>` (Git Bash cần `LC_ALL` thì `-P` mới chạy); chỉ được thấy ở chỗ chủ ý.
+- **Câu chữ:** mọi chuỗi giao diện qua `t()`. Khoá mới thêm vào `core/i18n/vi/common.json` theo plan §4.12.
+- **CSS:** chỉ dùng biến của `tokens.css`. Transition chỉ trên `opacity` và `transform` (plan §3.1).
+- **Xong mỗi task:** `npm test`, `npm run lint`, `npm run build` đều sạch. Task có đổi bundle thì báo kích thước chunk (gzip).
+
+- [x] T01 [ui-core-dev] Token và kiểu nền (plan §4.1):
+  - `tokens.css`: đủ các nhóm trong bảng §4.1; khối `html.kiosk`; `@media (min-width: 600px)` đổi `--gutter`.
+  - `global.css`:
+    - font hệ thống, cỡ chữ, giãn dòng, nền; `color-scheme: light`;
+    - `:focus-visible` dùng `--color-focus`; `[data-nen-dam]` đổi sang `--color-focus-on-dark`;
+    - `prefers-reduced-motion` tắt mọi hiệu ứng;
+    - `scrollbar-gutter: stable`; `html.khoa-cuon`.
+  - `diemGay.ts`: mốc 600/1024 và chuỗi media query.
+  - `main.tsx` import `tokens.css` trước `global.css`.
+  - file: `src/FrontEnd/src/core/styles/{tokens.css, global.css, diemGay.ts}`, `src/FrontEnd/src/main.tsx`
+  - xong khi:
+    - Build, lint sạch.
+    - Trong CSS của bản build không có `@font-face`, `@import url(`, địa chỉ `http` tới máy khác, `prefers-color-scheme`.
+    - Mọi giá trị khớp design-system §3; màu bổ sung khớp prototype — code-reviewer đối chiếu.
+- [x] T02 [ui-core-dev] [P] Hàm thuần (plan §4.3):
+  - `phanTrang.ts`, `lienKet.ts`, `timKiem.ts`, `cx.ts`, kèm test.
+  - file: `src/FrontEnd/src/core/utils/{phanTrang, lienKet, timKiem, cx}.ts` và `*.test.ts` tương ứng
+  - xong khi có test xanh cho:
+    - `dayTrang` với 20 trang: đúng 5 dãy của AC-13 ở trang 1, 2, 10, 19, 20. Với 1 trang: chỉ có `[1]`.
+    - `chuanHoaSoTrang`: `"99"` với 3 trang → 3. `"abc"`, `"-1"`, `"0"`, `"1.5"`, `"2abc"`, `""`, `null` → 1 (AC-14).
+    - `phanLoaiLienKet`:
+      - `https://…`, `http://…` → web; `tel:02723893900` → điện thoại; `mailto:a@b.vn` → thư.
+      - Trả `null`: `javascript:alert(1)`, ` JavaScript:alert(1)`, `java` + tab + `script:alert(1)`, `data:text/html,x`, `vbscript:x`, `/thu-tuc`, `//evil.example`, `https://`, `""`, `null`, `undefined` (AC-6).
+    - `taoBoLocTuKhoa`:
+      - AC-7: `"dang ky khai sinh"`, `"ĐĂNG KÝ KHAI SINH"`, `"  khai   sinh  đăng ký "` cho cùng kết quả trên cùng bộ mục.
+      - AC-8: `"thuy"` khớp cả "Thủy" lẫn "Thuỷ"; từ khoá ở dạng NFD cho cùng kết quả như NFC; U+200B chèn giữa "kh" và "ai", và ở đầu từ khoá → như "khai sinh"; U+200E giữa "k" và "ý" → như "đăng ký".
+      - Từ khoá rỗng hoặc chỉ có khoảng trắng → khớp mọi mục.
+- [x] T03 [ui-core-dev] Gói và cấu hình (plan §4.2, §3.1):
+  - Gói:
+    - Thêm `@tanstack/react-table` (bản ổn định mới nhất; vướng React 19 thì dùng 8.x và ghi lý do), `lucide-react`.
+    - Thêm dev: `@testing-library/user-event`, `@testing-library/jest-dom`, `@axe-core/playwright`.
+    - Commit lockfile (khi người dùng bảo commit).
+  - `vite.config.ts`: `test.setupFiles` → `src/test-setup.ts` (jest-dom; giả lập `matchMedia`, `Element.prototype.scrollIntoView`). Không đưa TanStack, lucide vào nhóm `vendor`.
+  - `eslint.config.js`:
+    - Chặn `@tanstack/react-table` ngoài `src/core/components/DataTable/BangDuLieu.tsx`.
+    - Chặn import cả bộ icon: `import * as … from 'lucide-react'`, import `icons` hay `DynamicIcon`, import `lucide-react/dynamic`.
+  - Kiểm `lucide-react` có tự thêm `aria-hidden` cho icon không có tên không; ghi kết quả vào báo cáo.
+  - file: `src/FrontEnd/{package.json, package-lock.json, vite.config.ts, eslint.config.js}`, `src/FrontEnd/src/test-setup.ts`
+  - xong khi:
+    - `npm audit --omit=dev` không còn mức High/Critical.
+    - Thêm thử một import TanStack ở tệp khác, hoặc `import * as I from 'lucide-react'` → `npm run lint` báo lỗi. Bỏ thử → lint sạch.
+    - Báo kích thước gzip của lucide: một icon và phần dùng chung.
+- [x] T04 [ui-core-dev] Chế độ kiosk, hook, liên hệ (plan §4.4):
+  - `core/kiosk/{cheDoKiosk.ts, useCheDoKiosk.ts}`. `main.tsx` gọi `khoiTaoCheDoKiosk()` trước khi render.
+  - Hook: `useMediaQuery`, `useCachXem`, `useDanhSachUrl`.
+  - Liên hệ: `LienHeProvider`, `useLienHe`.
+  - file: `src/FrontEnd/src/core/kiosk/`, `src/FrontEnd/src/core/hooks/{useMediaQuery, useCachXem, useDanhSachUrl}.ts` và test, `src/FrontEnd/src/core/components/LienHe/`, `src/FrontEnd/src/main.tsx`
+  - xong khi có test xanh cho:
+    - Kiosk:
+      - `?kiosk=1&q=a` → `<html>` có class `kiosk`, `sessionStorage` có cờ, địa chỉ còn `?q=a`.
+      - Khởi tạo lần hai không có tham số (tải lại) → vẫn là kiosk.
+      - `?kiosk=0` → tắt.
+      - `sessionStorage` ném lỗi → vẫn bật cho lần tải này.
+    - `useCachXem`:
+      - Dưới 600 px → `'the'`, kể cả khi đã chọn `'bang'`.
+      - Chưa chọn: 600–1023 px → `'the'`; từ 1024 px → `'bang'`; ở kiosk → `'the'`.
+      - Hai component cùng dùng hook: chọn `'bang'` ở một chỗ → cả hai đổi.
+      - Thu xuống dưới 600 px rồi nới lại → về `'bang'` (AC-11).
+    - `useDanhSachUrl`:
+      - Đổi từ khoá, bộ lọc hoặc khoá `khac` → mất `trang`.
+      - `xoaBoLoc` xoá từ khoá, bộ lọc, trang; giữ khoá `khac`.
+      - `coDieuKien` đúng với từng tổ hợp.
+      - Gõ nhanh 5 ký tự (đồng hồ giả) → địa chỉ được ghi 1 lần, sau 300 ms; trong lúc chờ, `trang` trả `null`.
+      - Địa chỉ đổi từ bên ngoài → `tuKhoa` theo.
+      - Mọi lần ghi đều thay mục lịch sử, không thêm mục mới.
+    - `useLienHe`: trong `LienHeProvider` trả đúng số đã truyền; không có provider → `null`.
+- [x] T05 [ui-core-dev] Nút (plan §4.5): `VisuallyHidden`, `Button` (kèm `lopNut`), `IconButton`, `FloatingButton`, `SectionTitle`.
+  - file: `src/FrontEnd/src/core/components/{VisuallyHidden, Button, IconButton, FloatingButton, SectionTitle}/`, `src/FrontEnd/src/core/i18n/vi/common.json`
+  - xong khi có test xanh cho:
+    - Tên và vai trò đúng; Enter và phím cách đều kích hoạt.
+    - `disabled` → không gọi `onClick`, Tab bỏ qua.
+    - `dangXuLy`:
+      - Bấm 2 lần thật nhanh → `onClick` chạy 1 lần (AC-5).
+      - Có `aria-busy` và `aria-disabled`; vẫn nhận focus; có chữ ẩn "Đang xử lý".
+    - `dangBat` true/false → `aria-pressed` tương ứng (AC-5).
+    - `IconButton`: thiếu `nhan` là lỗi `tsc` (kiểm bằng `// @ts-expect-error` trong test); icon có `aria-hidden`.
+    - `FloatingButton`: có `aria-expanded`, `aria-controls`; vị trí trái/phải; lớp đổi theo `trenPopup`.
+    - CSS: không có `transition` trên thuộc tính khác `opacity`, `transform`.
+- [x] T06 [ui-core-dev] Liên kết ngoài, ô dịch vụ, nhãn, thẻ (plan §4.6): `ExternalLink`, `Tile`, `TileGrid`, `Badge`, `Card` + `CardActions`.
+  - file: `src/FrontEnd/src/core/components/{ExternalLink, Tile, Badge, Card}/`, `src/FrontEnd/src/core/i18n/vi/common.json`
+  - xong khi có test xanh cho:
+    - `ExternalLink`:
+      - Web → `target="_blank"`, `rel` đúng `noopener noreferrer`, tên đọc có "(mở trang mới)".
+      - `tel:`, `mailto:` → không có `target`, không có chữ ẩn.
+      - `javascript:alert(1)` → không có `<a>`, chỉ còn chữ thường (AC-6).
+    - `Tile`:
+      - Có link → đúng 1 `<a>`; có "Trang ngoài" (`aria-hidden`); tên đọc gồm tên ô và "(mở trang mới)".
+      - `href = null` và `javascript:alert(1)` → không có `<a>`, `role`, `tabindex`; không có "Trang ngoài"; cùng class khung, biểu tượng, tên như ô có link (AC-21).
+    - `Badge`: không focus được; có chữ; `rutGon` có class một dòng; nhãn rỗng không render.
+    - `CardActions`: đặt đúng class xếp nút.
+- [x] T07 [ui-core-dev] Ô tìm, chip, chuyển dạng (plan §4.7): `SearchBox`, `ChipGroup`, `Chip`, `SegmentedControl`, `ViewToggle`. Trạng thái đọc của chip theo Cần hỏi 2.
+  - file: `src/FrontEnd/src/core/components/{SearchBox, Chip, SegmentedControl}/`, `src/FrontEnd/src/core/i18n/vi/common.json`
+  - xong khi có test xanh cho:
+    - `SearchBox`:
+      - Nhãn gắn với ô nhập; không có nút micro.
+      - Mỗi ký tự gõ gọi `onDoi`.
+      - Nút ✕ chỉ có khi ô có chữ. Bấm ✕ → `onDoi('')`, con trỏ vẫn ở ô (AC-9).
+      - Enter không gửi form.
+      - Vùng `role="status"` báo "Có n kết quả." sau khi đứng yên 500 ms; không báo lúc vừa mở.
+    - `ChipGroup`:
+      - Chọn chip mới → chip cũ `aria-pressed="false"`; chip đang chọn có icon ✓ (AC-10).
+      - Nhóm có `role="group"` và `aria-label`.
+      - Nút cuộn có `tabIndex=-1` và `aria-hidden`.
+    - `ViewToggle`: hai nút `aria-pressed`, lựa chọn đang dùng có ✓; có class ẩn dưới 600 px.
+- [x] T08 [ui-core-dev] Phân trang và DataTable (plan §4.8): `Pager`, `DataTable`, `BangDuLieu` (nạp lười), lưới thẻ. Con trỏ sau khi đổi trang theo Cần hỏi 3.
+  - file: `src/FrontEnd/src/core/components/{Pager, DataTable}/`, `src/FrontEnd/src/core/i18n/vi/common.json`
+  - xong khi có test xanh cho:
+    - `Pager`:
+      - 1 trang → không render.
+      - Trang 1: nút Trước `disabled`. Trang cuối: nút Sau `disabled` (AC-5).
+      - `aria-current="page"` đúng trang; dãy số theo `dayTrang`.
+      - Tên đọc "Trang trước", "Trang sau", "Trang n".
+    - `DataTable`:
+      - `cachXem='the'` → không nạp `BangDuLieu` (đếm bằng mock của `import`).
+      - `'bang'` → có `<caption>`, mọi `<th>` có `scope="col"`, vùng cuộn có `tabIndex=0` và có tên.
+      - Chuyển `the ↔ bang` ở trang 3 → vẫn trang 3, cùng thứ tự (AC-11).
+      - `trang="99"` với 3 trang → hiện trang 3; `"abc"` → trang 1 (AC-14).
+      - Bấm số trang → gọi `onDoiTrang` và `scrollIntoView`. Lần render đầu không cuộn (AC-13).
+      - Giả lập điện thoại → dạng thẻ dù `cachXem='bang'`.
+    - `npm run build`:
+      - Có chunk riêng chứa TanStack Table; `vendor` và chunk trang chủ không chứa.
+      - Báo kích thước gzip của chunk này.
+- [x] T09 [ui-core-dev] [P] Popup (plan §4.9): `Modal`.
+  - file: `src/FrontEnd/src/core/components/Modal/`
+  - xong khi có test xanh (dùng `user-event`) cho:
+    - Mở → con trỏ nằm trong popup; có `role="dialog"`, `aria-modal="true"`; `aria-labelledby` trỏ đúng tiêu đề.
+    - Vòng Tab:
+      - Tab liên tục đi vòng trong popup; Shift+Tab từ phần tử đầu → phần tử cuối (AC-15).
+      - Có một nút con trực tiếp của `<body>` mang `data-ngoai-popup` → nút này là phần tử cuối vòng: Tab từ nó → phần tử đầu; Shift+Tab từ phần tử đầu → nó (AC-24).
+      - Không có nút đó → vòng chỉ gồm phần tử trong popup.
+    - Đóng:
+      - Esc → `onDong`.
+      - Hai popup lồng nhau → Esc chỉ đóng popup trên cùng.
+      - Bấm vùng tối → `onDong`. Bấm trong popup, hoặc kéo chọn chữ từ trong popup ra ngoài → không đóng.
+      - Đóng xong → con trỏ về nút đã mở (AC-15).
+    - Khi mở: `<html>` có class `khoa-cuon`; các con khác của `<body>` có `inert`, phần tử `[data-ngoai-popup]` thì không. Đóng → gỡ hết.
+- [x] T10 [ui-core-dev] Trạng thái tải, lỗi, không có kết quả (plan §4.10): `Skeleton`, `ErrorState`, `EmptyState`, `QueryState`. Câu gợi ý theo Cần hỏi 4.
+  - file: `src/FrontEnd/src/core/components/{Skeleton, ErrorState, EmptyState, QueryState}/`, `src/FrontEnd/src/core/i18n/vi/common.json`
+  - xong khi có test xanh cho:
+    - `Skeleton`: có `role="status"` đọc "Đang tải…"; các khối có `aria-hidden`; CSS không có `animation` (AC-18).
+    - `ErrorState`:
+      - Lỗi `mat-ket-noi` → đủ "Chưa tải được dữ liệu.", câu "Không kết nối được tới máy chủ…", nút "Thử lại", link `tel:` lấy từ provider; không có mã tra cứu (AC-19).
+      - `loi-he-thong` có `maTraCuu` → hiện "Mã tra cứu: …".
+      - Có `role="alert"`. Không có provider → không có dòng số.
+    - `QueryState`: lỗi → bấm "Thử lại" → khung chờ hiện trong lúc tải lại → hiện dữ liệu.
+    - `EmptyState`:
+      - Có từ khoá và chip → câu có "với 'xyzxyz'", đủ 4 gợi ý, có nút "Xoá bộ lọc" (AC-20).
+      - `nutXoaTrenThanhLoc` → không có nút, gợi ý xoá bộ lọc bằng chữ.
+      - Chỉ có bộ lọc → câu không có phần "với …".
+      - Không từ khoá, không lọc → còn 2 gợi ý, không có nút.
+      - Từ khoá `<b>abc</b>` → chữ hiện nguyên, DOM không có thẻ `<b>` (AC-20).
+- [x] T11 [ui-core-dev] Trang xem trước `/dev/design-system`, chỉ có ở bản dev (plan §4.11):
+  - Route trong `app/router.tsx` sau `import.meta.env.DEV`. Mã ở `app/xem-truoc/`, namespace `xem-truoc`; thêm kiểu vào `app/i18n.d.ts`.
+  - Đủ các khối trong bảng §4.11, gồm: nút bật/tắt kiosk; link và ô `javascript:alert(1)`; danh sách luôn rỗng có ô tìm; nút giả `data-ngoai-popup` ở kiosk.
+  - file: `src/FrontEnd/src/app/{router.tsx, i18n.d.ts}`, `src/FrontEnd/src/app/xem-truoc/`
+  - xong khi:
+    - `npm run dev` → mở được `/dev/design-system`. Bật kiosk → chữ và chiều cao điều khiển lớn lên.
+    - `npm run build`:
+      - `wwwroot` không có tệp nào của trang xem trước, không có chuỗi riêng của trang (tìm tên namespace `xem-truoc` và 2 câu riêng của trang).
+      - Mở `/dev/design-system` trên bản build qua API → trang 404.
+    - JS tải ban đầu (cách đo ở plan §5) ≤ 200 KB gzip. Báo bảng kích thước từng chunk trước và sau C01.
+    - Đánh `[x]` F00 T13; báo planner.
+- [ ] T12 [code-reviewer] Review C01 theo `CLAUDE.md`, `plan.md`, design-system → `.specify/specs/C01-component-dung-chung/result/review.md`:
+  - Kiểm riêng:
+    - token khớp design-system §3;
+    - không giá trị cứng trong CSS component;
+    - transition chỉ trên `opacity`, `transform`;
+    - không `dangerouslySetInnerHTML`, không style chèn vào HTML;
+    - `rel` của liên kết ngoài;
+    - TanStack chỉ ở `BangDuLieu.tsx`; trang xem trước không có trong bản build;
+    - mọi chuỗi giao diện qua i18n.
+  - xong khi: có kết luận ĐẠT/KHÔNG ĐẠT; lỗi Chặn (nếu có) đã được agent sở hữu sửa.
+- [x] T13 [tester] [P] `testcases.md` cho C01:
+  - Phủ AC-1…AC-24 và BR-1…BR-13.
+  - Ghi rõ ca nào chạy được ngay trên trang xem trước, ca nào chờ chức năng (plan §8). Tiêu chí câu đọc của trình đọc màn hình cho AC-10, AC-11 theo Cần hỏi 2.
+  - file: `.specify/specs/C01-component-dung-chung/testcases.md`
+  - xong khi: mỗi BR/AC có ít nhất một ca thử, có cách làm và kết quả mong đợi.
+- [x] T14 [tester] Chạy `testcases.md` → `.specify/specs/C01-component-dung-chung/result/test.md` — đã chạy 2026-10-12, kết quả CHƯA ĐẠT (DS-08 trượt; Lighthouse / = 84 do F08; nhiều ca Chờ F02–F09):
+  - Playwright `e2e/thanh-phan.spec.ts` trên `/dev/design-system`:
+    - axe (`@axe-core/playwright`, thẻ `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`) ở chế độ thường và kiosk, khổ 375 và 1080×1920 (AC-4).
+    - Không cuộn ngang ở mọi khổ; vùng bấm ≥ 24 × 24 px ở 375 (AC-2).
+    - Vòng Tab của popup, có nút giả ở kiosk (AC-15, AC-24 phần lõi).
+    - Liên kết và ô `javascript:` (AC-6); ô dịch vụ (AC-21); danh sách rỗng (AC-20, gạch cuối).
+    - Giảm chuyển động (AC-23).
+    - Tốc độ ô tìm kiếm (AC-25): khối "Tìm 1.000 mục" ở 375 px, 4G giả lập; 10 lần gõ, giá trị chậm nhất ≤ 200 ms. Cách đo ở plan §8; ghi số đo và cách đo vào `result/test.md`.
+  - Thử tay: chế độ đen trắng (AC-3); NVDA (AC-10, AC-15, AC-19); bảng hiệu ứng (AC-23); gõ bằng Unikey (Telex, VNI) trên Chrome và gõ nhanh trên Safari iOS (plan §10 rủi ro 3).
+  - AC còn lại chạy khi chức năng có (plan §8).
+  - file: `src/FrontEnd/e2e/thanh-phan.spec.ts`, `.specify/specs/C01-component-dung-chung/result/test.md`
+  - xong khi: mọi ca có kết quả. Đạt hết, kể cả các AC chờ chức năng → đổi `trang_thai` của `spec.md` sang `xong`.
+- [x] T15 [ui-core-dev] (thêm 2026-10-12, AC-25) Khối "Tìm 1.000 mục" trên trang xem trước (plan §4.11):
+  - `app/xem-truoc/`: `SearchBox` + danh sách 1.000 mục sinh bằng mã (`duLieuMau.ts`), lọc bằng `taoBoLocTuKhoa` + `useDeferredValue`, có ô hiện số kết quả. Chữ qua i18n namespace `xem-truoc`. Ký tự vô hình ghép bằng `String.fromCodePoint`, không gõ escape qua Edit/Bash.
+  - file: `src/FrontEnd/src/app/xem-truoc/`, `src/FrontEnd/src/app/i18n.d.ts`
+  - xong khi: `npm run dev` mở được khối; gõ "dang ky" ra đúng số mục; `npm run build` vẫn không có tệp nào của trang xem trước; `npm test`, `npm run lint` sạch; tự đo sơ bộ ở 375 px, báo số đo cho tester (chưa phải số chính thức).

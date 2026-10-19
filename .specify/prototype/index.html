@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tra cứu thủ tục hành chính — Prototype</title>
+<style>
+:root{
+  --color-primary:#0b66c2;--color-primary-strong:#074a90;--color-primary-soft:#e8f1fb;
+  --color-accent:#dc2626;--color-accent-strong:#b91c1c;
+  --color-bg:#eef5fc;--color-surface:#fff;--color-border:#d3e0ee;--color-border-strong:#6b84a3;
+  --color-text:#0f172a;--color-text-muted:#475569;
+  --color-success:#047857;--color-success-soft:#ecfdf5;--color-warning:#92400e;--color-warning-soft:#fffbeb;
+  --color-danger:#b91c1c;--color-danger-soft:#fef2f2;
+  --font:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;--mono:ui-monospace,'Cascadia Mono',Consolas,monospace;
+  --fs-xs:.6875rem;--fs-sm:.75rem;--fs-md:.8125rem;--fs-lg:.875rem;--fs-xl:1.125rem;--fs-2xl:1.25rem;--fs-3xl:1.75rem;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:24px;--s8:32px;
+  --r-sm:8px;--r-md:12px;--r-lg:14px;--r-pill:999px;
+  --shadow-sm:0 1px 4px rgba(15,23,42,.10);--shadow-md:0 4px 16px rgba(15,23,42,.14);
+  --control-h:2.125rem;--gutter:16px;
+}
+html.kiosk{font-size:118.75%;--control-h:2.5rem}
+@media (min-width:600px){:root{--gutter:24px}}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font);font-size:var(--fs-md);line-height:1.4;color:var(--color-text);background:var(--color-bg)}
+a{color:var(--color-primary)}
+:focus-visible{outline:3px solid var(--color-primary);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{max-width:1280px;margin:0 auto;padding:0 var(--gutter)}
+svg.i{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.skip{position:absolute;left:-9999px;top:0}
+.skip:focus{left:var(--s4);top:var(--s2);z-index:100;background:#fff;padding:var(--s2) var(--s3);border-radius:var(--r-sm)}
+
+/* Thanh điều khiển của prototype (không có trong bản thật) */
+.proto{background:#fff7d6;border-bottom:1px solid #f0d77a;font-size:var(--fs-sm)}
+.proto .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2) var(--s3);padding-top:6px;padding-bottom:6px}
+.proto b{color:#6b4f00}
+.proto label{display:flex;align-items:center;gap:var(--s1)}
+.proto select,.proto button,.proto a{font:inherit;font-size:var(--fs-sm);min-height:28px;border:1px solid #c9a93a;border-radius:6px;background:#fff;color:#3d2e00;padding:0 var(--s2);cursor:pointer;display:inline-flex;align-items:center;text-decoration:none}
+.proto button[aria-pressed=true]{background:#6b4f00;color:#fff;border-color:#6b4f00}
+
+/* Đầu trang + điều hướng */
+header.app{background:var(--color-surface);border-bottom:1px solid var(--color-border)}
+header.app .wrap{display:flex;align-items:center;gap:var(--s3);min-height:60px}
+.brand{display:flex;align-items:center;gap:var(--s3);text-decoration:none;color:inherit;min-width:0}
+.logo{width:40px;height:40px;border-radius:50%;background:var(--color-primary-strong);color:#fff;display:grid;place-items:center;flex:none}
+.logo svg{width:22px;height:22px}
+.brand b{display:block;color:var(--color-primary-strong);font-size:var(--fs-xl);line-height:1.25}
+.brand span{color:var(--color-text-muted);font-size:var(--fs-sm)}
+@media (max-width:599px){.brand b{font-size:var(--fs-lg)}}
+nav.tabs{background:var(--color-surface);border-bottom:1px solid var(--color-border);position:sticky;top:0;z-index:10}
+nav.tabs .wrap{display:flex;gap:var(--s1);overflow-x:auto}
+nav.tabs a{display:flex;align-items:center;gap:6px;padding:0 var(--s4);min-height:42px;font-weight:600;color:var(--color-text-muted);text-decoration:none;border-bottom:3px solid transparent;white-space:nowrap}
+nav.tabs a:hover{color:var(--color-primary)}
+nav.tabs a[aria-current=page]{color:var(--color-primary);border-bottom-color:var(--color-primary)}
+/* Dưới 600px: nhãn ngắn, 3 mục chia đều, vừa 375px không cuộn; tên đầy đủ vẫn còn cho trình đọc màn hình */
+nav.tabs .nhan-ngan{display:none}
+@media (max-width:599px){
+  nav.tabs .wrap{gap:0}
+  nav.tabs a{flex:1 1 auto;justify-content:center;padding:0 var(--s2)}
+  nav.tabs .nhan-ngan{display:inline}
+  nav.tabs .nhan-day{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
+/* Nút "Bắt đầu lại" — chỉ ở kiosk; nổi góc trái dưới (đối xứng nút Trợ lý), nằm trên cả popup để bấm được khi popup đang mở */
+html:not(.kiosk) .bat-dau-lai{display:none}
+html.kiosk .bat-dau-lai{display:inline-flex;position:fixed;left:var(--gutter);bottom:var(--gutter);z-index:55;min-height:48px;padding:0 var(--s4);border-radius:var(--r-pill);box-shadow:var(--shadow-md)}
+main{display:block;padding-bottom:80px;min-height:50vh}
+main:focus{outline:none}
+
+/* Banner, ô dịch vụ */
+.hero{margin-top:var(--s5);border-radius:var(--r-lg);background:linear-gradient(120deg,#074a90 0%,#0b66c2 60%,#2f86d6 100%);color:#fff;padding:var(--s5) var(--s6);display:grid;gap:var(--s1)}
+.hero small{font-size:var(--fs-sm);font-weight:500}
+.hero h1{margin:0;font-size:var(--fs-2xl);line-height:1.25}
+.hero p{margin:0}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s3);margin-top:var(--s4)}
+@media (min-width:600px){.tiles{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:1024px){.tiles{grid-template-columns:repeat(6,1fr)}}
+.tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:var(--s3);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--r-md);box-shadow:var(--shadow-sm);text-decoration:none;color:var(--color-primary-strong);font-weight:600;min-height:88px}
+a.tile:hover{border-color:var(--color-primary);box-shadow:var(--shadow-md)}
+.tile .ic{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;color:#fff}
+.tile .ic svg{width:20px;height:20px}
+.tile .ext{display:flex;align-items:center;gap:4px;font-size:var(--fs-xs);font-weight:400;color:var(--color-text-muted)}
+.tile .ext svg{width:12px;height:12px}
+.c1{background:#4f46e5}.c2{background:#be185d}.c3{background:#0f766e}.c4{background:#c2410c}.c5{background:#0b66c2}.c6{background:#074a90}
+/* Ô chưa có link / link sai định dạng: trông như ô thường nhưng là <div>, không bấm được, không vào bằng Tab (câu hỏi mở 30) */
+
+/* Tiêu đề mục, panel lọc, điều khiển */
+.section-title{display:flex;align-items:center;gap:var(--s2);margin:var(--s6) 0 var(--s3)}
+.section-title::before{content:"";width:4px;height:18px;background:var(--color-accent);border-radius:2px;flex:none}
+.section-title h2{margin:0;font-size:var(--fs-lg);font-weight:700}
+.section-title .count{margin-left:auto;color:var(--color-text-muted);font-size:var(--fs-sm)}
+.panel{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--r-md);padding:var(--s3);display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s2);box-shadow:var(--shadow-sm)}
+.row{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center}
+.row>label{min-width:0;max-width:100%} /* ô chọn lĩnh vực dài không đẩy trang tràn ngang */
+.search{flex:1 1 240px;display:flex;align-items:center;gap:var(--s2);border:1px solid var(--color-border-strong);border-radius:var(--r-sm);padding:0 var(--s3);min-height:var(--control-h);background:#fff}
+.search:focus-within{outline:3px solid var(--color-primary);outline-offset:2px}
+.search input{border:0;outline:0;font:inherit;flex:1;min-width:0;background:transparent;color:inherit}
+select.sel{font:inherit;font-size:var(--fs-sm);min-height:var(--control-h);border:1px solid var(--color-border-strong);border-radius:var(--r-sm);padding:0 var(--s2);background:#fff;color:inherit;max-width:100%}
+.seg{display:inline-flex;border:1px solid var(--color-border-strong);border-radius:var(--r-sm);overflow:hidden}
+.seg button{border:0;background:#fff;color:var(--color-primary);font:inherit;font-size:var(--fs-sm);font-weight:600;min-height:var(--control-h);padding:0 var(--s3);display:flex;align-items:center;gap:6px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--color-primary);color:#fff}
+@media (max-width:599px){.seg{display:none}} /* điện thoại luôn dạng thẻ (câu hỏi mở 29) */
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.chip{flex:none;border:1px solid var(--color-border-strong);background:#fff;color:var(--color-text);border-radius:var(--r-pill);min-height:28px;padding:0 var(--s3);font:inherit;font-size:var(--fs-sm);font-weight:500;display:flex;align-items:center;gap:4px;cursor:pointer}
+html.kiosk .chip{min-height:var(--control-h)}
+.chip[aria-pressed=true]{background:var(--color-primary);border-color:var(--color-primary);color:#fff}
+.chip svg{width:14px;height:14px}
+.btn{font:inherit;font-weight:600;white-space:nowrap;min-height:var(--control-h);border-radius:var(--r-sm);padding:0 var(--s3);display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;text-decoration:none;border:1px solid transparent}
+.btn-primary{background:var(--color-primary);color:#fff}.btn-primary:hover{background:var(--color-primary-strong)}
+.btn-accent{background:var(--color-accent);color:#fff}.btn-accent:hover{background:var(--color-accent-strong)}
+.btn-secondary{background:#fff;color:var(--color-primary);border-color:var(--color-border-strong)}.btn-secondary:hover{border-color:var(--color-primary)}
+.btn[aria-disabled=true]{opacity:.5;cursor:not-allowed}
+.icon-btn{width:var(--control-h);height:var(--control-h);display:grid;place-items:center;border:1px solid var(--color-border-strong);border-radius:var(--r-sm);background:#fff;color:var(--color-text);cursor:pointer;flex:none}
+
+/* Thẻ, bảng, nhãn */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:var(--s3);margin-top:var(--s3)}
+html.kiosk .grid{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--r-md);box-shadow:var(--shadow-sm);padding:var(--s3);display:flex;flex-direction:column;gap:var(--s2)}
+.card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s2)}
+.code{font-family:var(--mono);font-size:var(--fs-xs);color:var(--color-text-muted);white-space:nowrap}
+.card h3{margin:0;font-size:var(--fs-lg);font-weight:600;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.meta{display:flex;flex-wrap:wrap;gap:var(--s1)}
+.badge{display:inline-flex;align-items:center;gap:4px;border-radius:var(--r-pill);padding:1px 8px;font-size:var(--fs-xs);font-weight:600;border:1px solid transparent;line-height:1.6;max-width:100%;white-space:nowrap}
+.badge.b-info{white-space:normal}
+.badge svg{width:12px;height:12px}
+.b-info{background:var(--color-primary-soft);color:var(--color-primary-strong)}
+.b-success{background:var(--color-success-soft);color:var(--color-success);border-color:#a7dcc6}
+.b-warning{background:var(--color-warning-soft);color:var(--color-warning);border-color:#f3d48a}
+.b-neutral{background:#f1f5f9;color:var(--color-text)}
+.actions{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:auto}
+.actions .btn{flex:1 1 auto}
+.table-wrap{overflow-x:auto;margin-top:var(--s3);border:1px solid var(--color-border);border-radius:var(--r-md);background:#fff}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:var(--s2) var(--s3);border-bottom:1px solid var(--color-border);vertical-align:top}
+th{background:#f6f9fd;font-size:var(--fs-sm);color:var(--color-text-muted);font-weight:600;white-space:nowrap}
+tbody tr:hover td{background:#f8fbff}
+tbody tr:last-child td{border-bottom:0}
+td.so{color:var(--color-text-muted);font-size:var(--fs-sm)}
+.link-btn{border:0;background:none;padding:0;font:inherit;color:var(--color-primary);text-align:left;cursor:pointer;font-weight:500}
+.link-btn:hover{text-decoration:underline}
+.dvc-link{display:inline-flex;align-items:center;gap:4px;font-weight:600;white-space:nowrap;color:var(--color-primary);text-decoration:none}
+.dvc-link:hover{text-decoration:underline}
+.pager{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;margin-top:var(--s4)}
+.pager button{min-width:var(--control-h);min-height:var(--control-h);border:1px solid var(--color-border-strong);border-radius:var(--r-sm);background:#fff;font:inherit;font-size:var(--fs-sm);cursor:pointer;padding:0 var(--s2);display:grid;place-items:center}
+.pager button[aria-current=page]{background:var(--color-primary);border-color:var(--color-primary);color:#fff}
+.pager button:disabled{opacity:.45;cursor:default}
+
+/* Trạng thái tải / lỗi / rỗng */
+.state{background:#fff;border:1px dashed var(--color-border-strong);border-radius:var(--r-md);padding:var(--s6) var(--s4);text-align:center;color:var(--color-text-muted);display:grid;gap:var(--s2);justify-items:center;margin-top:var(--s3)}
+.state svg{width:28px;height:28px}
+.state b{color:var(--color-text);font-size:var(--fs-lg)}
+.state.loi{border-color:#f5b5b5;background:var(--color-danger-soft)}
+.state.loi svg{color:var(--color-danger)}
+.sk{background:linear-gradient(90deg,#e7eef6,#f3f7fb,#e7eef6);background-size:200% 100%;animation:sk 1.2s linear infinite;border-radius:6px;height:12px}
+@keyframes sk{to{background-position:-200% 0}}
+
+/* Danh mục: thống kê, tab cấp */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s3);margin-top:var(--s5)}
+.stat{background:#fff;border:1px solid var(--color-border);border-left:4px solid var(--color-primary);border-radius:var(--r-md);padding:var(--s3) var(--s4);box-shadow:var(--shadow-sm);min-width:0}
+@media (max-width:599px){.stats{gap:var(--s2)}.stat{padding:var(--s2) var(--s3)}}
+.stat b{display:block;font-size:var(--fs-3xl);font-weight:800;line-height:1.1;color:var(--color-primary)}
+.stat span{font-size:var(--fs-sm);color:var(--color-text-muted)}
+.stat.s2{border-left-color:var(--color-success)}.stat.s2 b{color:var(--color-success)}
+.stat.s3{border-left-color:#b45309}.stat.s3 b{color:#b45309}
+.cap-tabs{display:flex;gap:var(--s1);border-bottom:1px solid var(--color-border);margin-top:var(--s5)}
+.cap-tabs button{border:0;background:none;font:inherit;font-weight:600;color:var(--color-text-muted);padding:0 var(--s4);min-height:38px;border-bottom:3px solid transparent;cursor:pointer}
+.cap-tabs button[aria-selected=true]{color:var(--color-primary);border-bottom-color:var(--color-primary)}
+.result-info{font-size:var(--fs-sm);font-weight:600;color:var(--color-text-muted);margin-top:var(--s3)}
+
+/* Lĩnh vực + QR */
+.lv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--s3);margin-top:var(--s3)}
+.lv{background:#fff;border:1px solid var(--color-border);border-radius:var(--r-md);box-shadow:var(--shadow-sm);display:flex;flex-direction:column}
+.lv-top{display:flex;gap:var(--s2);padding:var(--s3) var(--s3) var(--s2);border-bottom:1px solid var(--color-border)}
+.lv-ic{width:32px;height:32px;border-radius:8px;background:var(--color-primary-soft);color:var(--color-primary-strong);display:grid;place-items:center;flex:none}
+.lv-top a{font-weight:700;color:var(--color-text);text-decoration:none;font-size:var(--fs-sm);line-height:1.35}
+.lv-top a:hover{color:var(--color-primary);text-decoration:underline}
+.lv-top small{display:block;font-size:var(--fs-xs);color:var(--color-text-muted);margin-top:2px}
+.lv-qr{padding:var(--s3);display:grid;justify-items:center;gap:6px;margin-top:auto}
+.lv-qr .qr{width:112px;height:112px;background:#f1f5f9;border-radius:6px}
+.lv-qr svg{width:112px;height:112px;display:block}
+.lv-qr small{font-size:var(--fs-xs);color:var(--color-text-muted)}
+
+/* Giờ làm việc, chân trang */
+.hours{margin-top:var(--s6);background:var(--color-primary-strong);color:#fff;border-radius:var(--r-md);padding:var(--s3) var(--s5);display:grid;gap:var(--s2)}
+@media (min-width:900px){.hours{grid-template-columns:auto 1fr 1fr auto;align-items:center}}
+.hours h2{margin:0;font-size:var(--fs-md);display:flex;gap:var(--s2);align-items:center}
+.slot{background:rgba(255,255,255,.12);border-radius:var(--r-sm);padding:6px var(--s3)}
+.slot small{display:block;font-size:var(--fs-xs)}
+.slot b{font-size:var(--fs-lg)}
+.status{display:inline-flex;align-items:center;gap:var(--s1);font-weight:600;font-size:var(--fs-sm);border-radius:var(--r-pill);padding:var(--s1) var(--s3);justify-self:start}
+.status.mo{background:var(--color-success-soft);color:var(--color-success)}
+.status.dong{background:#f1f5f9;color:var(--color-text)}
+.hours .foot{grid-column:1/-1;font-size:var(--fs-sm)}
+footer.app{background:var(--color-primary-strong);color:#fff;padding:var(--s6) 0 calc(var(--s4) + 64px)} /* chừa chỗ cho nút nổi Trợ lý / Bắt đầu lại */
+html.kiosk footer.app{padding-bottom:calc(var(--s4) + 80px)}
+footer.app a{color:#fff}
+footer.app :focus-visible{outline-color:#fff}
+.cols{display:grid;gap:var(--s5)}
+@media (min-width:900px){.cols{grid-template-columns:1.3fr 1fr 1fr}}
+footer.app h2{font-size:var(--fs-md);margin:0 0 var(--s2)}
+footer.app ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+footer.app li{display:flex;gap:var(--s2);align-items:flex-start}
+footer.app li svg{margin-top:2px}
+.legal{border-top:1px solid rgba(255,255,255,.25);margin-top:var(--s5);padding-top:var(--s3);font-size:var(--fs-sm);display:grid;gap:4px}
+
+/* Popup chi tiết */
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:50;display:grid;place-items:center;padding:var(--s4)}
+.overlay[hidden]{display:none}
+.modal{background:#fff;border-radius:var(--r-lg);box-shadow:var(--shadow-md);width:100%;max-width:680px;max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden}
+.modal>header{display:flex;align-items:flex-start;gap:var(--s3);padding:var(--s3) var(--s4);border-bottom:1px solid var(--color-border)}
+.modal>header>div{flex:1;min-width:0}
+.modal>header h2{margin:6px 0 0;font-size:var(--fs-xl);line-height:1.3}
+.modal .body{padding:var(--s3) var(--s4);overflow:auto;display:grid;gap:var(--s4)}
+.modal h3{margin:0 0 var(--s1);font-size:var(--fs-md)}
+.modal dl{display:grid;grid-template-columns:max-content 1fr;gap:6px var(--s4);margin:0}
+.modal dt{color:var(--color-text-muted)}
+.modal dd{margin:0}
+.modal ol,.modal ul{margin:0;padding-left:1.25em;display:grid;gap:4px}
+.modal .note{font-size:var(--fs-sm);color:var(--color-text-muted);background:#f8fafc;border-radius:var(--r-sm);padding:var(--s2) var(--s3)}
+.modal>footer{display:flex;gap:var(--s2);justify-content:flex-end;flex-wrap:wrap;padding:var(--s3) var(--s4);border-top:1px solid var(--color-border)}
+.modal table{font-size:var(--fs-sm);border:1px solid var(--color-border)}
+.pre{white-space:pre-line;margin:0}
+.so-ban{display:block;font-size:var(--fs-sm);color:var(--color-text-muted)}
+@media (max-width:599px){.overlay{padding:0}.modal{max-width:none;max-height:none;height:100%;border-radius:0}.modal dl{grid-template-columns:1fr}.modal dt{margin-top:4px}}
+/* Kiosk: popup chừa dải dưới cho nút "Bắt đầu lại" — nút không che nút hành động và lời miễn trừ cuối popup */
+html.kiosk .overlay{padding-bottom:88px}
+html.kiosk .modal{max-height:calc(100vh - 104px)}
+
+/* Trợ lý */
+.fab{position:fixed;right:var(--gutter);bottom:var(--gutter);z-index:40;background:var(--color-primary);color:#fff;border:0;border-radius:var(--r-pill);min-height:44px;padding:0 var(--s4) 0 var(--s3);display:flex;align-items:center;gap:var(--s2);font:inherit;font-weight:600;box-shadow:var(--shadow-md);cursor:pointer}
+.fab svg{width:20px;height:20px}
+.chat{position:fixed;right:var(--gutter);bottom:calc(var(--gutter) + 52px);z-index:45;width:370px;height:530px;max-height:calc(100vh - 100px);background:#fff;border:1px solid var(--color-border);border-radius:var(--r-lg);box-shadow:var(--shadow-md);display:flex;flex-direction:column;overflow:hidden}
+.chat[hidden]{display:none}
+@media (max-width:599px){.chat{inset:0;width:auto;height:auto;max-height:none;border-radius:0}}
+.chat>header{background:var(--color-primary-strong);color:#fff;display:flex;align-items:center;gap:var(--s2);padding:var(--s2) var(--s3)}
+.chat>header b{flex:1}
+.chat>header .icon-btn{background:transparent;border-color:rgba(255,255,255,.5);color:#fff;width:30px;height:30px}
+.chat>header .icon-btn[aria-pressed=true]{background:#fff;color:var(--color-primary-strong)}
+.msgs{flex:1;overflow:auto;padding:var(--s3);display:flex;flex-direction:column;gap:var(--s2);background:var(--color-bg)}
+.msg{max-width:88%;padding:9px 12px;border-radius:var(--r-md);line-height:1.55;font-size:.78125rem}
+.msg.me{align-self:flex-end;background:var(--color-primary);color:#fff;border-bottom-right-radius:4px}
+.msg.bot{align-self:flex-start;background:#fff;border:1px solid var(--color-border);border-bottom-left-radius:4px}
+.msg ul,.msg ol{margin:4px 0 0;padding-left:1.1em}
+.msg .msg-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:var(--s2)}
+.msg .btn{min-height:28px;font-size:var(--fs-sm);padding:0 var(--s2)}
+.quick{display:flex;flex-wrap:wrap;gap:6px;padding:var(--s2) var(--s3);border-top:1px solid var(--color-border)}
+.chat form{display:flex;gap:var(--s2);padding:10px;border-top:1px solid var(--color-border)}
+.chat input{flex:1;min-width:0;border:1px solid var(--color-border-strong);border-radius:var(--r-sm);font:inherit;padding:0 var(--s3);min-height:var(--control-h)}
+
+/* Dòng nhắc đăng xuất cạnh liên kết tới Cổng DVC — chỉ hiện ở kiosk (F09 BR-4) */
+.nhac-dx{display:none;align-items:center;gap:4px;font-size:var(--fs-sm);color:var(--color-text-muted);font-weight:400}
+.nhac-dx svg{width:14px;height:14px}
+html.kiosk .nhac-dx{display:flex}
+.nhac-khoi{margin:var(--s3) 0 0}
+.chat .nhac-dx{padding:6px var(--s3);background:#fff;border-bottom:1px solid var(--color-border)}
+.modal>footer{align-items:center}
+.modal>footer .nhac-dx{order:-1;margin-right:auto}
+@media (prefers-reduced-motion:reduce){.sk{animation:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1Z"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></symbol>
+  <symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></symbol>
+  <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2 20 7H4Z"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.3L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.3L3 16"/><path d="M3 21v-5h5"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+</svg>
+
+<div class="proto" role="region" aria-label="Điều khiển bản prototype">
+  <div class="wrap">
+    <b>PROTOTYPE — dữ liệu mẫu (Vàm Cỏ → Cần Giuộc), không phải trang thật.</b>
+    <button type="button" id="p-kiosk" aria-pressed="false">Chế độ kiosk</button>
+    <label>Mô phỏng dữ liệu
+      <select id="p-che-do">
+        <option value="binh-thuong">Bình thường</option>
+        <option value="dang-tai">Đang tải</option>
+        <option value="loi">Mất kết nối</option>
+      </select>
+    </label>
+    <a href="#/?ma=1.001193">Link thủ tục: khai sinh</a>
+    <a href="#/?ma=9.999999">Link thủ tục sai mã</a>
+    <a href="#/khong-co">Trang 404</a>
+  </div>
+</div>
+
+<a class="skip" href="#noi-dung" id="skip">Bỏ qua, tới nội dung chính</a>
+<header class="app">
+  <div class="wrap">
+    <a class="brand" href="#/">
+      <span class="logo" aria-hidden="true"><svg class="i"><use href="#i-landmark"/></svg></span>
+      <span><b id="ten-trung-tam"></b><span id="ten-dia-ban"></span></span>
+    </a>
+  </div>
+</header>
+<nav class="tabs" aria-label="Điều hướng chính">
+  <div class="wrap">
+    <a href="#/" data-path="/"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg>Trang chủ</a>
+    <a href="#/thu-tuc" data-path="/thu-tuc"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg><span class="nhan-day">Danh mục thủ tục</span><span class="nhan-ngan" aria-hidden="true">Danh mục</span></a>
+    <a href="#/linh-vuc" data-path="/linh-vuc"><svg class="i" aria-hidden="true"><use href="#i-grid"/></svg><span class="nhan-day">Lĩnh vực và mã QR</span><span class="nhan-ngan" aria-hidden="true">Lĩnh vực</span></a>
+  </div>
+</nav>
+
+<main id="noi-dung" tabindex="-1" class="wrap"></main>
+<footer class="app" id="chan-trang"></footer>
+
+<button type="button" class="btn btn-primary bat-dau-lai" id="bat-dau-lai"><svg class="i" aria-hidden="true"><use href="#i-refresh"/></svg>Bắt đầu lại</button>
+<button type="button" class="fab" id="fab" aria-expanded="false" aria-controls="chat"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg>Trợ lý</button>
+<section class="chat" id="chat" aria-label="Trợ lý thủ tục" hidden>
+  <header>
+    <svg class="i" aria-hidden="true"><use href="#i-chat"/></svg><b>Trợ lý thủ tục</b>
+    <button type="button" class="icon-btn" id="chat-doc" aria-pressed="false" aria-label="Đọc câu trả lời" hidden><svg class="i" aria-hidden="true"><use href="#i-volume"/></svg></button>
+    <button type="button" class="icon-btn" id="chat-dong" aria-label="Đóng trợ lý"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>
+  </header>
+  <span class="nhac-dx" id="chat-nhac"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg>Nhớ đăng xuất khi dùng xong</span>
+  <div class="msgs" id="msgs" aria-live="polite"></div>
+  <div class="quick" id="quick"></div>
+  <form id="chat-form">
+    <label class="sr" for="chat-input">Câu hỏi</label>
+    <input id="chat-input" maxlength="500" autocomplete="off" placeholder="Nhập câu hỏi về thủ tục">
+    <button type="submit" class="btn btn-primary">Gửi</button>
+  </form>
+</section>
+
+<div class="overlay" id="popup" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ct-tieu-de" id="popup-hop"></div>
+</div>
+
+<script src="du-lieu-mau.js"></script>
+<script>
+(() => {
+  "use strict";
+  const D = window.DU_LIEU;
+  const main = document.getElementById("noi-dung");
+  if (!D) { main.textContent = "Thiếu file du-lieu-mau.js — chạy script sinh dữ liệu mẫu trước."; return; }
+
+  // ---------- Tiện ích ----------
+  const $ = (s, el = document) => el.querySelector(s);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const chuanHoa = (s) => String(s ?? "").normalize("NFD").replace(/\p{Mn}/gu, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase().replace(/\s+/g, " ").trim();
+  const icon = (id) => `<svg class="i" aria-hidden="true"><use href="#i-${id}"/></svg>`;
+  const rutGon = (s, n) => (s && s.length > n ? s.slice(0, n).trim() + "…" : s || "");
+  const linkDvc = (ma) => "https://dichvucong.gov.vn/tra-cuu-thu-tuc/danh-sach?keyword=" + encodeURIComponent(ma) + "&showAdvanced=false&formalityType=STANDARD&limit=10&activeKey=STANDARD";
+  const linkNgoai = (href, cls, noiDung) => `<a class="${cls}" href="${esc(href)}" target="_blank" rel="noopener noreferrer">${noiDung}<span class="sr"> (mở trang mới)</span></a>`;
+  // Dòng nhắc đăng xuất: một dòng mỗi nơi có liên kết tới Cổng DVC (trên danh sách thủ tục, trên ô dịch vụ, trong popup,
+  // trong khung trợ lý), không lặp ở từng thẻ/dòng. Luôn có trong HTML, CSS chỉ cho hiện ở kiosk — bật/tắt kiosk không cần vẽ lại
+  const NHAC_DX = `<span class="nhac-dx">${icon("logout")}Nhớ đăng xuất khi dùng xong</span>`;
+  const NHAC_KHOI = `<p class="nhac-dx nhac-khoi">${icon("logout")}Nhớ đăng xuất khi dùng xong</p>`;
+  // Liên kết "Xem và nộp trên Cổng DVC": nút (thẻ, popup, trợ lý) hoặc link gọn (dòng bảng); cùng linkDvc
+  const nutCongDvc = (ma) => linkNgoai(linkDvc(ma), "btn btn-accent", icon("external") + "Xem và nộp trên Cổng DVC");
+  const linkCongDvc = (ma) => linkNgoai(linkDvc(ma), "dvc-link", icon("external") + "Xem và nộp trên Cổng DVC");
+  // Chỉ nhận địa chỉ web http/https (C01 BR-3); dạng khác coi là link sai định dạng
+  const laLinkWeb = (s) => { try { return ["http:", "https:"].includes(new URL(s).protocol); } catch { return false; } };
+  const laCongDvc = (s) => { try { const h = new URL(s).hostname; return h === "dichvucong.gov.vn" || h.endsWith(".dichvucong.gov.vn"); } catch { return false; } };
+  const dienThoaiNho = matchMedia("(max-width: 599px)");
+  const luu = { doc(k) { try { return localStorage.getItem(k); } catch { return null; } }, ghi(k, v) { try { localStorage.setItem(k, v); } catch { /* bỏ qua */ } } };
+
+  // ---------- Dữ liệu chuẩn bị sẵn ----------
+  for (const t of D.thuTuc) t._s = " " + chuanHoa(t.ten + " " + t.ma + " " + t.lv) + " ";
+  const theoMa = new Map(D.thuTuc.map((t) => [t.ma, t]));
+  const lvTheoMa = new Map(D.linhVuc.map((l) => [l.ma, l]));
+  const lvTheoTen = new Map(D.linhVuc.map((l) => [l.ten, l]));
+  const thuongGap = D.thuTuc.filter((t) => t.tg).sort((a, b) => a.tg - b.tg);
+  const linhVucCoThuTuc = D.linhVuc.filter((l) => l.soXa + l.soTinh > 0);
+  const khop = (s, q) => !q || q.split(" ").every((w) => s.includes(w));
+  const MUC_DO = { "toan-trinh": "Toàn trình", "mot-phan": "Một phần" };
+  const TT = D.trungTam;
+  const telTrungTam = (TT.dienThoai || "").replace(/\D/g, "");
+
+  // ---------- Địa chỉ trang (hash) ----------
+  const docDiaChi = () => {
+    const h = location.hash || "#/";
+    if (!h.startsWith("#/")) return null;
+    const i = h.indexOf("?");
+    return { path: i < 0 ? h.slice(1) : h.slice(1, i), q: new URLSearchParams(i < 0 ? "" : h.slice(i + 1)) };
+  };
+  const taoDiaChi = (path, q) => { const s = q.toString(); return "#" + path + (s ? "?" + s : ""); };
+  const khongMa = (q) => { const c = new URLSearchParams(q); c.delete("ma"); return c.toString(); };
+  let route = docDiaChi() || { path: "/", q: new URLSearchParams() };
+  let kiosk = false;
+  let cheDo = "binh-thuong";
+
+  // Kiosk: mọi điều hướng thay mục lịch sử, để sau "Bắt đầu lại" nút Quay lại không mở lại trạng thái người trước
+  const diToi = (url) => {
+    if (kiosk) { history.replaceState(null, "", url); xuLyDiaChi(); }
+    else location.hash = url;
+  };
+  const datThamSo = (thay, veLai = false) => {
+    const q = new URLSearchParams(route.q);
+    for (const [k, v] of Object.entries(thay)) (v == null || v === "") ? q.delete(k) : q.set(k, v);
+    route.q = q;
+    history.replaceState(null, "", taoDiaChi(route.path, q));
+    if (veLai) veTrang(); else TRANG[route.path]?.ketQua?.();
+  };
+
+  // ---------- Thành phần dùng chung ----------
+  // Dữ liệu nguồn có chỗ ghi thời hạn là "Khác" — khi đó lấy theo cách thức thực hiện
+  const thoiHan = (t) => {
+    const ro = (s) => s && !/^\s*\d*\s*kh[aá]c\s*$/i.test(s);
+    if (ro(t.th)) return t.th;
+    const c = t.cach.find((x) => ro(x.tg));
+    return c ? c.tg : "";
+  };
+  const badgeMucDo = (t) => t.md === "Toàn trình" ? `<span class="badge b-success">Toàn trình</span>` : t.md === "Một phần" ? `<span class="badge b-warning">Một phần</span>` : "";
+  const oTim = (act, nhan, giaTri) => `<label class="search">${icon("search")}<span class="sr">${esc(nhan)}</span><input type="search" data-act="${act}" value="${esc(giaTri || "")}" placeholder="${esc(nhan)}" autocomplete="off"></label>`;
+  const veThe = (t) => `<article class="card">
+      <div class="top"><span class="badge b-info">${esc(t.lv)}</span><span class="code">${esc(t.ma)}</span></div>
+      <h3>${esc(t.ten)}</h3>
+      <div class="meta">${badgeMucDo(t)}${thoiHan(t) ? `<span class="badge b-neutral">${icon("clock")}${esc(rutGon(thoiHan(t), 28))}</span>` : ""}</div>
+      <div class="actions"><button type="button" class="btn btn-secondary" data-mo="${esc(t.ma)}">Xem chi tiết</button>${nutCongDvc(t.ma)}</div>
+    </article>`;
+  const veBang = (ds, batDau) => `<div class="table-wrap"><table>
+      <thead><tr><th scope="col">STT</th><th scope="col">Mã</th><th scope="col">Tên thủ tục</th><th scope="col">Lĩnh vực</th><th scope="col">Mức độ</th><th scope="col">Cơ quan thực hiện</th><th scope="col">Cổng DVC</th></tr></thead>
+      <tbody>${ds.map((t, i) => `<tr><td class="so">${batDau + i + 1}</td><td class="code">${esc(t.ma)}</td><td><button type="button" class="link-btn" data-mo="${esc(t.ma)}">${esc(t.ten)}</button></td><td>${esc(t.lv)}</td><td>${badgeMucDo(t)}</td><td>${esc(t.cq)}</td><td>${linkCongDvc(t.ma)}</td></tr>`).join("")}</tbody>
+    </table></div>`;
+  const dsTrang = (so, ht) => {
+    const a = [...new Set([1, so, ht - 1, ht, ht + 1].filter((p) => p >= 1 && p <= so))].sort((x, y) => x - y);
+    const out = [];
+    a.forEach((p, i) => { if (i && p - a[i - 1] > 1) out.push("…"); out.push(p); });
+    return out;
+  };
+  const vePhanTrang = (tong, moiTrang, ht) => {
+    const so = Math.ceil(tong / moiTrang);
+    if (so <= 1) return "";
+    return `<nav class="pager" aria-label="Phân trang">
+      <button type="button" data-act="trang" data-p="${ht - 1}" ${ht <= 1 ? "disabled" : ""} aria-label="Trang trước">${icon("left")}</button>
+      ${dsTrang(so, ht).map((p) => p === "…" ? `<span aria-hidden="true">…</span>` : `<button type="button" data-act="trang" data-p="${p}" ${p === ht ? 'aria-current="page"' : ""} aria-label="Trang ${p}">${p}</button>`).join("")}
+      <button type="button" data-act="trang" data-p="${ht + 1}" ${ht >= so ? "disabled" : ""} aria-label="Trang sau">${icon("right")}</button>
+    </nav>`;
+  };
+  const veDangTai = () => `<div class="grid" aria-busy="true" aria-label="Đang tải">${Array.from({ length: 6 }, () => `<div class="card"><div class="sk" style="width:40%"></div><div class="sk" style="width:92%;height:14px"></div><div class="sk" style="width:65%"></div><div class="sk" style="width:100%;height:30px;margin-top:8px"></div></div>`).join("")}</div>`;
+  const veLoi = () => `<div class="state loi" role="alert">${icon("alert")}<b>Không kết nối được tới máy chủ</b><span>Vui lòng kiểm tra mạng rồi thử lại. Cần hỗ trợ, gọi <a href="tel:${telTrungTam}">${esc(TT.dienThoai)}</a>.</span><button type="button" class="btn btn-secondary" data-act="thu-lai">${icon("refresh")}Thử lại</button></div>`;
+  // Trang có nút "Xoá bộ lọc" trên thanh bộ lọc thì thông báo chỉ gợi ý bằng chữ, không lặp nút
+  const veRong = (thanhLocCoNutXoa) => `<div class="state">${icon("search")}<b>Không tìm thấy thủ tục phù hợp</b>${thanhLocCoNutXoa
+    ? `<span>Thử từ khoá khác, hoặc bấm “Xoá bộ lọc” ở thanh bộ lọc phía trên.</span>`
+    : `<span>Thử từ khoá khác hoặc bỏ bớt bộ lọc.</span><button type="button" class="btn btn-secondary" data-act="xoa-loc">Xoá bộ lọc</button>`}</div>`;
+  const datNutXem = (xem) => document.querySelectorAll("[data-act=xem]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === xem)));
+  const veDanhSach = (phan, batDau, xem) => NHAC_KHOI + (xem === "bang" ? veBang(phan, batDau) : `<div class="grid">${phan.map(veThe).join("")}</div>`);
+  const NUT_XEM = `<div class="seg" role="group" aria-label="Cách hiển thị"><button type="button" data-act="xem" data-v="the">${icon("grid")}Dạng thẻ</button><button type="button" data-act="xem" data-v="bang">${icon("list")}Dạng bảng</button></div>`;
+  const trangHienTai = () => Math.max(1, parseInt(route.q.get("trang") || "1", 10) || 1);
+  // Điện thoại (< 600px) luôn dạng thẻ, không có nút chuyển dạng (câu hỏi mở 29)
+  const cachXem = () => dienThoaiNho.matches ? "the" : luu.doc("cach-xem") || (kiosk || innerWidth < 1024 ? "the" : "bang");
+
+  // ---------- Trang chủ: ô dịch vụ, thủ tục thường gặp, giờ làm việc ----------
+  const ICON_O = ["ticket", "star", "search", "card", "landmark", "building"];
+  // Ô chưa có link hoặc link sai định dạng: vẫn hiện như ô thường (giữ biểu tượng, tên), nhưng không phải link,
+  // bấm không mở gì, Tab bỏ qua, không có dòng "Trang ngoài" (câu hỏi mở 30)
+  const veO = (o, i) => {
+    const ic = `<span class="ic c${i + 1}">${icon(ICON_O[i] || "external")}</span>`;
+    return laLinkWeb(o.url)
+      ? `<a class="tile" href="${esc(o.url)}" target="_blank" rel="noopener noreferrer">${ic}${esc(o.ten)}<span class="ext">${icon("external")}Trang ngoài</span><span class="sr"> (mở trang mới)</span></a>`
+      : `<div class="tile">${ic}${esc(o.ten)}</div>`;
+  };
+  const dangLamViec = () => {
+    const p = Object.fromEntries(new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Ho_Chi_Minh", weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false }).formatToParts(new Date()).map((x) => [x.type, x.value]));
+    const phut = (+p.hour % 24) * 60 + +p.minute;
+    const trong = (khung) => { const [a, b] = khung.split("-").map((s) => { const [h, m] = s.split(":"); return +h * 60 + +m; }); return phut >= a && phut < b; };
+    return ["Mon", "Tue", "Wed", "Thu", "Fri"].includes(p.weekday) && (trong(TT.gioLamViec.sang) || trong(TT.gioLamViec.chieu));
+  };
+  const veGioLamViec = () => {
+    const mo = dangLamViec();
+    const [s1, s2] = TT.gioLamViec.sang.split("-");
+    const [c1, c2] = TT.gioLamViec.chieu.split("-");
+    return `<section class="hours" aria-labelledby="gio-t">
+      <h2 id="gio-t">${icon("clock")}Thời gian làm việc</h2>
+      <div class="slot"><small>Buổi sáng</small><b>${s1} – ${s2}</b></div>
+      <div class="slot"><small>Buổi chiều</small><b>${c1} – ${c2}</b></div>
+      <span class="status ${mo ? "mo" : "dong"}">${icon(mo ? "check" : "clock")}${mo ? "Đang trong giờ làm việc" : "Ngoài giờ làm việc"}</span>
+      <div class="foot">${esc(TT.gioLamViec.ngay)}. ${esc(TT.ghiChuNgayNghi)}.</div>
+    </section>`;
+  };
+  const veTrangChu = () => `
+    <section class="hero" aria-labelledby="hero-t">
+      <small>${esc(TT.coQuanChuQuan)}</small>
+      <h1 id="hero-t">${esc(TT.ten)}</h1>
+      <p>Tra cứu thủ tục hành chính, hồ sơ cần chuẩn bị và nơi nộp hồ sơ.</p>
+    </section>
+    ${D.oDichVu.some((o) => laCongDvc(o.url)) ? NHAC_KHOI : ""}
+    <nav class="tiles" aria-label="Dịch vụ nhanh">${D.oDichVu.map(veO).join("")}</nav>
+    <section aria-labelledby="tg-t">
+      <div class="section-title"><h2 id="tg-t">Thủ tục thường gặp</h2><span class="count" id="tg-dem"></span></div>
+      <div class="panel">
+        <div class="row">${oTim("tim", "Tìm theo tên, mã thủ tục hoặc lĩnh vực", route.q.get("q"))}
+          ${NUT_XEM}
+        </div>
+        <div class="chips" role="group" aria-label="Lọc theo lĩnh vực" id="tg-chips"></div>
+      </div>
+      <div id="ket-qua"></div>
+    </section>
+    ${veGioLamViec()}`;
+  const ketQuaThuongGap = () => {
+    const q = chuanHoa(route.q.get("q"));
+    const lv = route.q.get("lv") || "";
+    const cacLv = [...new Set(thuongGap.map((t) => t.lv))];
+    $("#tg-chips").innerHTML = [`<button type="button" class="chip" data-act="chip" data-lv="" aria-pressed="${!lv}">${!lv ? icon("check") : ""}Tất cả</button>`]
+      .concat(cacLv.map((ten) => { const m = lvTheoTen.get(ten)?.ma || ""; return `<button type="button" class="chip" data-act="chip" data-lv="${esc(m)}" aria-pressed="${lv === m}">${lv === m ? icon("check") : ""}${esc(ten)}</button>`; })).join("");
+    const ds = thuongGap.filter((t) => (!lv || lvTheoTen.get(t.lv)?.ma === lv) && khop(t._s, q));
+    $("#tg-dem").textContent = `Hiển thị ${ds.length}/${thuongGap.length}`;
+    const xem = cachXem();
+    datNutXem(xem);
+    const kq = $("#ket-qua");
+    if (cheDo === "dang-tai") { kq.innerHTML = veDangTai(); return; }
+    if (cheDo === "loi") { kq.innerHTML = veLoi(); return; }
+    if (!ds.length) { kq.innerHTML = veRong(false); return; }
+    const MOI = 12, ht = Math.min(trangHienTai(), Math.ceil(ds.length / MOI));
+    const phan = ds.slice((ht - 1) * MOI, ht * MOI);
+    kq.innerHTML = veDanhSach(phan, (ht - 1) * MOI, xem) + vePhanTrang(ds.length, MOI, ht);
+  };
+
+  // ---------- Danh mục thủ tục cấp xã / tỉnh ----------
+  const capHienTai = () => (route.q.get("cap") === "tinh" ? "tinh" : "xa");
+  const veDanhMuc = () => {
+    const cap = capHienTai();
+    const lvMa = route.q.get("lv") || "";
+    const soXa = D.thuTuc.filter((t) => t.xa).length;
+    const soTinh = D.thuTuc.filter((t) => t.tinh).length;
+    const tuyChonLv = linhVucCoThuTuc.filter((l) => (cap === "xa" ? l.soXa : l.soTinh) > 0)
+      .map((l) => `<option value="${esc(l.ma)}" ${l.ma === lvMa ? "selected" : ""}>${esc(l.ten)} (${cap === "xa" ? l.soXa : l.soTinh})</option>`).join("");
+    const md = route.q.get("md") || "";
+    return `
+      <div class="stats">
+        <div class="stat"><b>${soXa}</b><span>Thủ tục cấp xã</span></div>
+        <div class="stat s2"><b>${soTinh}</b><span>Thủ tục cấp tỉnh</span></div>
+        <div class="stat s3"><b>${linhVucCoThuTuc.length}</b><span>Lĩnh vực</span></div>
+      </div>
+      <div class="cap-tabs" role="tablist" aria-label="Danh mục">
+        <button type="button" role="tab" data-act="cap" data-cap="xa" aria-selected="${cap === "xa"}">Thủ tục cấp xã</button>
+        <button type="button" role="tab" data-act="cap" data-cap="tinh" aria-selected="${cap === "tinh"}">Thủ tục cấp tỉnh</button>
+      </div>
+      <div class="panel" style="margin-top:12px" role="tabpanel">
+        <div class="row">
+          ${oTim("tim", "Tìm theo tên, mã thủ tục hoặc lĩnh vực", route.q.get("q"))}
+          <label><span class="sr">Lĩnh vực</span><select class="sel" data-act="loc-lv"><option value="">Tất cả lĩnh vực</option>${tuyChonLv}</select></label>
+          <label><span class="sr">Mức độ</span><select class="sel" data-act="loc-md"><option value="">Tất cả mức độ</option><option value="toan-trinh" ${md === "toan-trinh" ? "selected" : ""}>Toàn trình</option><option value="mot-phan" ${md === "mot-phan" ? "selected" : ""}>Một phần</option></select></label>
+          <button type="button" class="btn btn-secondary" data-act="xoa-loc">${icon("x")}Xoá bộ lọc</button>
+          ${NUT_XEM}
+        </div>
+      </div>
+      <div class="result-info" id="dm-dem" aria-live="polite"></div>
+      <div id="ket-qua"></div>`;
+  };
+  const ketQuaDanhMuc = () => {
+    const cap = capHienTai();
+    const q = chuanHoa(route.q.get("q"));
+    const lvMa = route.q.get("lv") || "";
+    const md = MUC_DO[route.q.get("md")] || "";
+    const kq = $("#ket-qua");
+    const xem = cachXem();
+    datNutXem(xem);
+    if (lvMa && !lvTheoMa.has(lvMa)) {
+      $("#dm-dem").textContent = "";
+      kq.innerHTML = `<div class="state">${icon("alert")}<b>Không tìm thấy lĩnh vực này</b><span>Đường link có thể đã cũ.</span><a class="btn btn-secondary" href="#/thu-tuc?cap=${cap}">Về danh mục thủ tục</a></div>`;
+      return;
+    }
+    const ds = D.thuTuc.filter((t) => (cap === "xa" ? t.xa : t.tinh) && (!lvMa || lvTheoTen.get(t.lv)?.ma === lvMa) && (!md || t.md === md) && khop(t._s, q));
+    const tong = D.thuTuc.filter((t) => (cap === "xa" ? t.xa : t.tinh)).length;
+    $("#dm-dem").textContent = `${ds.length.toLocaleString("vi")} thủ tục${ds.length !== tong ? " (đang lọc)" : ""}`;
+    if (cheDo === "dang-tai") { kq.innerHTML = veDangTai(); return; }
+    if (cheDo === "loi") { kq.innerHTML = veLoi(); return; }
+    if (!ds.length) { kq.innerHTML = veRong(true); return; }
+    const MOI = 25, ht = Math.min(trangHienTai(), Math.ceil(ds.length / MOI));
+    const phan = ds.slice((ht - 1) * MOI, ht * MOI);
+    kq.innerHTML = veDanhSach(phan, (ht - 1) * MOI, xem) + vePhanTrang(ds.length, MOI, ht);
+  };
+
+  // ---------- Lĩnh vực và mã QR ----------
+  const qrMau = (hat, nhan) => {
+    let x = 0;
+    for (const c of hat) x = (x * 31 + c.charCodeAt(0)) >>> 0;
+    const ngauNhien = () => { x ^= x << 13; x >>>= 0; x ^= x >> 17; x ^= x << 5; x >>>= 0; return x / 4294967296; };
+    const N = 25, o = [];
+    const laDinhVi = (r, c) => (r < 8 && c < 8) || (r < 8 && c >= N - 8) || (r >= N - 8 && c < 8);
+    const dinhVi = (r0, c0) => { o.push(`<path d="M${c0} ${r0}h7v7h-7z M${c0 + 1} ${r0 + 1}v5h5v-5z" fill-rule="evenodd"/><rect x="${c0 + 2}" y="${r0 + 2}" width="3" height="3"/>`); };
+    dinhVi(0, 0); dinhVi(0, N - 7); dinhVi(N - 7, 0);
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if (!laDinhVi(r, c) && ngauNhien() < 0.48) o.push(`<rect x="${c}" y="${r}" width="1" height="1"/>`);
+    return `<svg viewBox="-2 -2 29 29" role="img" aria-label="${esc(nhan)}"><rect x="-2" y="-2" width="29" height="29" fill="#fff"/><g fill="#0f172a">${o.join("")}</g></svg>`;
+  };
+  let quanSatQr = null;
+  const veLinhVuc = () => `
+    <div class="section-title"><h2>Lĩnh vực và mã QR</h2><span class="count" id="lv-dem"></span></div>
+    <div class="panel">
+      <div class="row">${oTim("tim", "Tìm lĩnh vực", route.q.get("q"))}</div>
+      <span class="result-info" style="margin:0">In mã QR dán tại quầy — người dân quét để xem ngay các thủ tục của lĩnh vực đó.</span>
+    </div>
+    <div class="lv-grid" id="ket-qua"></div>`;
+  const ketQuaLinhVuc = () => {
+    const q = chuanHoa(route.q.get("q"));
+    const ds = linhVucCoThuTuc.filter((l) => khop(" " + chuanHoa(l.ten) + " ", q));
+    $("#lv-dem").textContent = `${ds.length} lĩnh vực`;
+    const kq = $("#ket-qua");
+    if (cheDo === "dang-tai") { kq.innerHTML = veDangTai(); return; }
+    if (cheDo === "loi") { kq.innerHTML = veLoi(); return; }
+    if (!ds.length) { kq.innerHTML = `<div class="state">${icon("search")}<b>Không tìm thấy lĩnh vực phù hợp</b><span>Thử từ khoá khác.</span></div>`; return; }
+    kq.innerHTML = ds.map((l) => {
+      const cap = l.soXa ? "xa" : "tinh";
+      return `<article class="lv">
+        <div class="lv-top"><span class="lv-ic">${icon("folder")}</span><div>
+          <a href="#/thu-tuc?cap=${cap}&lv=${esc(l.ma)}">${esc(l.ten)}</a>
+          <small>${l.soXa} cấp xã · ${l.soTinh} cấp tỉnh</small>
+        </div></div>
+        <div class="lv-qr"><div class="qr" data-qr="${esc(l.ma)}" data-ten="${esc(l.ten)}"></div><small>Quét để xem thủ tục (QR mẫu)</small></div>
+      </article>`;
+    }).join("");
+    quanSatQr?.disconnect();
+    quanSatQr = new IntersectionObserver((muc) => muc.forEach((m) => {
+      if (!m.isIntersecting) return;
+      const el = m.target;
+      el.outerHTML = qrMau(el.dataset.qr, "Mã QR mẫu của lĩnh vực " + el.dataset.ten);
+      quanSatQr.unobserve(el);
+    }), { rootMargin: "200px" });
+    kq.querySelectorAll("[data-qr]").forEach((el) => quanSatQr.observe(el));
+  };
+
+  // ---------- 404 ----------
+  const ve404 = () => `<div class="state" style="margin-top:32px">${icon("alert")}<b>Không tìm thấy trang</b><span>Trang bạn tìm không có hoặc đã được chuyển.</span><a class="btn btn-primary" href="#/">${icon("home")}Về trang chủ</a></div>`;
+
+  const TRANG = {
+    "/": { ten: "Trang chủ", ve: veTrangChu, ketQua: ketQuaThuongGap },
+    "/thu-tuc": { ten: "Danh mục thủ tục", ve: veDanhMuc, ketQua: ketQuaDanhMuc },
+    "/linh-vuc": { ten: "Lĩnh vực và mã QR", ve: veLinhVuc, ketQua: ketQuaLinhVuc },
+  };
+  // Tiêu đề tab: "<Tên trang> – <Tên trung tâm>" (F08 BR-9); popup mở thì đúng tên thủ tục (câu hỏi mở 25)
+  const tieuDe = (ten) => ten + " – " + TT.ten;
+  let tieuDeTrang = document.title;
+  const veTrang = () => {
+    const p = TRANG[route.path];
+    document.querySelectorAll("nav.tabs a").forEach((a) => { if (a.dataset.path === route.path) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+    main.innerHTML = p ? p.ve() : ve404();
+    tieuDeTrang = tieuDe(p ? p.ten : "Không tìm thấy trang");
+    document.title = tieuDeTrang;
+    p?.ketQua?.();
+  };
+
+  // ---------- Popup chi tiết (link riêng ?ma=…) ----------
+  const popup = $("#popup"), hop = $("#popup-hop"), nutBatDauLai = $("#bat-dau-lai");
+  let moTrongTrang = false, nutDaMo = null;
+  const moPopup = (ma, nut) => {
+    nutDaMo = nut || null;
+    const q = new URLSearchParams(route.q); q.set("ma", ma);
+    moTrongTrang = !kiosk;
+    diToi(taoDiaChi(route.path, q));
+  };
+  const dongPopup = () => {
+    if (moTrongTrang) { moTrongTrang = false; history.back(); return; }
+    const q = new URLSearchParams(route.q); q.delete("ma");
+    route.q = q;
+    history.replaceState(null, "", taoDiaChi(route.path, q));
+    anPopup();
+  };
+  const veChiTiet = (t) => {
+    const muc = (tieuDe, noiDung) => noiDung ? `<section><h3>${tieuDe}</h3>${noiDung}</section>` : "";
+    const trinhTu = t.trinh.map((b) => `${b.th ? `<b>${esc(b.th)}</b>` : ""}<p class="pre">${esc(b.mo.replace(/\s*(Bước\s*\d+\s*[:.])/g, "\n$1").trim())}</p>`).join("");
+    return `<header><div><div class="meta"><span class="badge b-info">${esc(t.lv)}</span>${badgeMucDo(t)}<span class="code">${esc(t.ma)}</span></div><h2 id="ct-tieu-de">${esc(t.ten)}</h2></div>
+        <button type="button" class="icon-btn" data-act="dong" aria-label="Đóng">${icon("x")}</button></header>
+      <div class="body">
+        <dl>
+          <dt>Cơ quan thực hiện</dt><dd>${esc(t.cq || "—")}</dd>
+          <dt>Thời hạn giải quyết</dt><dd>${esc(thoiHan(t) || "Chưa ghi rõ — xem trên Cổng DVC Quốc gia")}</dd>
+          <dt>Phí, lệ phí</dt><dd>${esc(t.phi || "—")}</dd>
+          <dt>Cách nộp</dt><dd>${esc(t.nop.join(", ") || "—")}</dd>
+          <dt>Danh mục</dt><dd>${[t.xa && "Cấp xã", t.tinh && "Cấp tỉnh"].filter(Boolean).join(", ")}</dd>
+        </dl>
+        ${muc("Yêu cầu, điều kiện", t.dk && `<p class="pre">${esc(t.dk)}</p>`)}
+        ${muc("Thành phần hồ sơ", t.hs.length && `<ol>${t.hs.map((x) => `<li>${esc(x.t)}${x.bc != null ? `<span class="so-ban">Bản chính: ${x.bc} · Bản sao: ${x.bs}</span>` : ""}</li>`).join("")}</ol>`)}
+        ${muc("Trình tự thực hiện", t.trinh.length && trinhTu)}
+        ${muc("Cách thức thực hiện", t.cach.length && `<div class="table-wrap" style="margin:0"><table><thead><tr><th scope="col">Hình thức</th><th scope="col">Thời gian</th><th scope="col">Phí, lệ phí</th></tr></thead><tbody>${t.cach.map((c) => `<tr><td>${esc(c.ht)}</td><td>${esc(c.tg)}</td><td>${esc(c.phi || "—")}</td></tr>`).join("")}</tbody></table></div>`)}
+        ${muc("Kết quả", t.kq.length && `<ul>${t.kq.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`)}
+        ${muc("Căn cứ pháp lý", t.cc.length && `<ul>${t.cc.map((c) => `<li><b>${esc(c.so)}</b> — ${esc(c.ty)}</li>`).join("")}</ul>`)}
+        <p class="note">Thông tin để tham khảo, căn cứ chính thức theo Cổng Dịch vụ công Quốc gia. Bản prototype đã rút gọn nội dung chi tiết.</p>
+      </div>
+      <footer>${NHAC_DX}${nutCongDvc(t.ma)}</footer>`;
+  };
+  const veKhongThay = () => `<header><div><h2 id="ct-tieu-de">Không tìm thấy thủ tục này</h2></div><button type="button" class="icon-btn" data-act="dong" aria-label="Đóng">${icon("x")}</button></header>
+      <div class="body"><p style="margin:0">Thủ tục có thể đã đổi mã hoặc không còn áp dụng. Vui lòng tìm lại trong danh mục.</p></div>
+      <footer><button type="button" class="btn btn-primary" data-act="dong">Đóng</button></footer>`;
+  const hienPopup = (ma) => {
+    const t = theoMa.get(ma);
+    hop.innerHTML = t ? veChiTiet(t) : veKhongThay();
+    document.title = t ? t.ten : "Không tìm thấy thủ tục";
+    popup.hidden = false;
+    document.body.style.overflow = "hidden";
+    $("[data-act=dong]", hop).focus();
+  };
+  const anPopup = () => {
+    if (popup.hidden) return;
+    popup.hidden = true;
+    document.title = tieuDeTrang;
+    document.body.style.overflow = "";
+    if (nutDaMo && document.contains(nutDaMo)) nutDaMo.focus();
+    nutDaMo = null;
+  };
+  const xuLyPopup = () => { const ma = route.q.get("ma"); if (ma) hienPopup(ma); else anPopup(); };
+  popup.addEventListener("click", (e) => { if (e.target === popup) dongPopup(); });
+
+  // ---------- Điều hướng ----------
+  function xuLyDiaChi() {
+    const r = docDiaChi();
+    if (!r) return;
+    const doiTrang = r.path !== route.path || khongMa(r.q) !== khongMa(route.q);
+    route = r;
+    if (doiTrang) veTrang();
+    xuLyPopup();
+  }
+  addEventListener("hashchange", xuLyDiaChi);
+  dienThoaiNho.addEventListener("change", () => TRANG[route.path]?.ketQua?.());
+  $("#skip").addEventListener("click", (e) => { e.preventDefault(); main.focus(); main.scrollIntoView(); });
+
+  let henTim = null;
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a[href^='#/']");
+    if (a && kiosk) { e.preventDefault(); diToi(a.getAttribute("href")); return; }
+    const mo = e.target.closest("[data-mo]");
+    if (mo) { e.preventDefault(); moPopup(mo.dataset.mo, mo); return; }
+    const el = e.target.closest("[data-act]");
+    if (!el) return;
+    switch (el.dataset.act) {
+      case "chip": datThamSo({ lv: el.dataset.lv, trang: null }); break;
+      case "xem": luu.ghi("cach-xem", el.dataset.v); TRANG[route.path]?.ketQua?.(); break;
+      case "trang": datThamSo({ trang: el.dataset.p }); $("#ket-qua")?.scrollIntoView({ block: "start", behavior: "smooth" }); break;
+      case "xoa-loc": datThamSo({ q: null, lv: null, md: null, trang: null }, true); break;
+      case "cap": datThamSo({ cap: el.dataset.cap === "xa" ? null : el.dataset.cap, lv: null, trang: null }, true); break;
+      case "dong": dongPopup(); break;
+      case "thu-lai": cheDo = "binh-thuong"; $("#p-che-do").value = cheDo; TRANG[route.path]?.ketQua?.(); break;
+    }
+  });
+  document.addEventListener("input", (e) => {
+    const el = e.target.closest("[data-act=tim]");
+    if (!el) return;
+    clearTimeout(henTim);
+    henTim = setTimeout(() => datThamSo({ q: el.value.trim() || null, trang: null }), 120);
+  });
+  document.addEventListener("change", (e) => {
+    const el = e.target.closest("[data-act]");
+    if (el?.dataset.act === "loc-lv") datThamSo({ lv: el.value || null, trang: null });
+    if (el?.dataset.act === "loc-md") datThamSo({ md: el.value || null, trang: null });
+  });
+  document.addEventListener("keydown", (e) => {
+    if (popup.hidden) return;
+    if (e.key === "Escape") { e.preventDefault(); dongPopup(); return; }
+    if (e.key === "Tab") {
+      // Vòng Tab: các phần tử trong popup, rồi (ở kiosk) nút "Bắt đầu lại" — nút nằm ngoài popup nhưng vẫn bấm được
+      const ds = [...hop.querySelectorAll("a[href],button:not([disabled])")];
+      if (kiosk) ds.push(nutBatDauLai);
+      if (!ds.length) return;
+      e.preventDefault();
+      const i = ds.indexOf(document.activeElement);
+      ds[i < 0 ? 0 : (i + (e.shiftKey ? ds.length - 1 : 1)) % ds.length].focus();
+    }
+  });
+
+  // ---------- Chân trang ----------
+  // Đầu trang (F08 BR-5, plan §4.3): tên nguyên văn; địa bàn "<xa> – <tinh>" từ dữ liệu, không ghép chữ, không tự viết hoa;
+  // thiếu một thì hiện cái còn lại, thiếu cả hai thì ẩn dòng
+  $("#ten-trung-tam").textContent = TT.ten || "";
+  const diaBan = [TT.xa, TT.tinh].filter(Boolean).join(" – ");
+  $("#ten-dia-ban").textContent = diaBan;
+  $("#ten-dia-ban").hidden = !diaBan;
+  $("#chan-trang").innerHTML = `<div class="wrap">
+      <div class="cols">
+        <section><h2>${esc(TT.ten)}</h2><ul>
+          <li>${icon("landmark")}<span>Cơ quan chủ quản: ${esc(TT.coQuanChuQuan)}</span></li>
+          <li>${icon("user")}<span>Người chịu trách nhiệm nội dung: ${esc(TT.nguoiChiuTrachNhiem)}${TT.chucVuNguoiChiuTrachNhiem ? " – " + esc(TT.chucVuNguoiChiuTrachNhiem) : ""}</span></li></ul></section>
+        <section><h2>Địa chỉ và liên hệ</h2><ul>
+          <li>${icon("pin")}<span>${esc(TT.diaChi)}</span></li>
+          <li>${icon("phone")}<a href="tel:${telTrungTam}">${esc(TT.dienThoai)}</a></li>
+          ${TT.email ? `<li>${icon("mail")}<a href="mailto:${esc(TT.email)}">${esc(TT.email)}</a></li>` : ""}</ul></section>
+        <section><h2>Liên kết hữu ích</h2><ul>
+          <li>${icon("external")}${linkNgoai("https://dichvucong.gov.vn", "", "Cổng Dịch vụ công Quốc gia")}</li>
+          ${TT.website ? `<li>${icon("external")}${linkNgoai(TT.website, "", `Cổng thông tin điện tử ${TT.xa}`)}</li>` : ""}</ul></section>
+      </div>
+      <div class="legal">
+        <span>Dữ liệu thủ tục cập nhật ngày ${esc(D.capNhat)}. Thông tin để tham khảo, căn cứ chính thức theo Cổng Dịch vụ công Quốc gia.</span>
+        <span>© 2026 ${esc(TT.ten)}</span>
+      </div>
+    </div>`;
+
+  // ---------- Trợ lý (trả lời theo luật, không dùng AI) ----------
+  const chat = $("#chat"), fab = $("#fab"), msgs = $("#msgs"), input = $("#chat-input"), nutDoc = $("#chat-doc");
+  let dangNoiVe = null, docBat = luu.doc("doc-bat") === "1", giongDoc = null;
+  const VIET_TAT = [[/TTHC/g, "thủ tục hành chính"], [/UBND/g, "ủy ban nhân dân"], [/CCCD/g, "căn cước công dân"], [/DVC/g, "dịch vụ công"]];
+  const timGiong = () => { giongDoc = speechSynthesis?.getVoices?.().find((v) => v.lang?.toLowerCase().startsWith("vi") && v.localService) || null; nutDoc.hidden = !giongDoc; nutDoc.setAttribute("aria-pressed", String(docBat)); };
+  if ("speechSynthesis" in window) { timGiong(); speechSynthesis.addEventListener?.("voiceschanged", timGiong); }
+  const doc = (text) => {
+    if (!docBat || !giongDoc) return;
+    speechSynthesis.cancel();
+    let s = text; for (const [re, thay] of VIET_TAT) s = s.replace(re, thay);
+    const u = new SpeechSynthesisUtterance(s); u.voice = giongDoc; u.lang = giongDoc.lang; speechSynthesis.speak(u);
+  };
+  nutDoc.addEventListener("click", () => { docBat = !docBat; luu.ghi("doc-bat", docBat ? "1" : "0"); nutDoc.setAttribute("aria-pressed", String(docBat)); if (!docBat) speechSynthesis.cancel(); });
+  const themTin = (ai, html, chu) => {
+    const div = document.createElement("div");
+    div.className = "msg " + ai;
+    div.innerHTML = html;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+    // Đọc to phần trả lời, không đọc nhãn nút và dòng nhắc trong khối nút
+    if (ai === "bot") doc(chu || [...div.childNodes].filter((n) => !n.classList?.contains("msg-actions")).map((n) => n.textContent).join(""));
+  };
+  const GOI_Y = ["Làm giấy khai sinh cần gì?", "Nộp hồ sơ ở đâu?", "Mấy ngày có kết quả?", "Giờ làm việc?"];
+  const chaoMung = () => {
+    msgs.innerHTML = "";
+    themTin("bot", "Xin chào! Tôi trả lời câu hỏi về thủ tục hành chính tại Trung tâm: hồ sơ cần chuẩn bị, thời hạn, phí, nơi nộp.");
+    $("#quick").innerHTML = GOI_Y.map((g) => `<button type="button" class="chip" data-hoi="${esc(g)}">${esc(g)}</button>`).join("");
+  };
+  const moChat = (mo) => {
+    chat.hidden = !mo;
+    fab.setAttribute("aria-expanded", String(mo));
+    if (mo) { if (!msgs.children.length) chaoMung(); input.focus(); }
+    else { speechSynthesis?.cancel?.(); fab.focus(); }
+  };
+  fab.addEventListener("click", () => moChat(chat.hidden));
+  $("#chat-dong").addEventListener("click", () => moChat(false));
+  $("#quick").addEventListener("click", (e) => { const b = e.target.closest("[data-hoi]"); if (b) hoi(b.dataset.hoi); });
+  $("#chat-form").addEventListener("submit", (e) => { e.preventDefault(); const s = input.value.trim(); if (s) { input.value = ""; hoi(s); } });
+  const TU_BO = new Set(["lam", "cho", "toi", "minh", "can", "gi", "nhung", "nao", "the", "o", "dau", "xin", "hoi", "va", "la", "co", "khong", "bao", "nhieu", "may", "ngay", "phi", "le", "giay", "to", "ho", "so", "nop", "quay", "muon", "duoc", "thi", "thu", "tuc", "de", "ve", "cua", "ket", "qua", "mat", "tien", "chuan", "bi", "lau"]);
+  const timThuTuc = (n) => {
+    const tu = n.split(" ").filter((w) => w.length > 1 && !TU_BO.has(w));
+    if (!tu.length) return null;
+    let tot = null, diemTot = 0;
+    for (const t of D.thuTuc) {
+      let d = 0;
+      for (let i = 0; i < tu.length; i++) {
+        if (t._s.includes(" " + tu[i] + " ")) d += 1;
+        if (i < tu.length - 1 && t._s.includes(" " + tu[i] + " " + tu[i + 1] + " ")) d += 1.5;
+      }
+      if (t.tg) d += 0.3;
+      if (d > diemTot || (d === diemTot && tot && t.ten.length < tot.ten.length)) { tot = t; diemTot = d; }
+    }
+    return diemTot >= 2 ? tot : null;
+  };
+  const NOI_NOP = "Trung tâm Phục vụ hành chính công";
+  const timLinhVuc = (n) => {
+    let tot = null;
+    for (const l of D.linhVuc) { const ten = chuanHoa(l.ten); if (n.includes(ten) && (!tot || ten.length > chuanHoa(tot.ten).length)) tot = l; }
+    return tot;
+  };
+  const hoi = (cauHoi) => {
+    themTin("me", esc(cauHoi));
+    const n = chuanHoa(cauHoi);
+    if (/gio lam viec|may gio|mo cua|dong cua/.test(n)) {
+      return themTin("bot", `Trung tâm làm việc ${esc(TT.gioLamViec.ngay)}: sáng ${esc(TT.gioLamViec.sang)}, chiều ${esc(TT.gioLamViec.chieu)}. ${dangLamViec() ? "Hiện đang trong giờ làm việc." : "Hiện ngoài giờ làm việc."}`);
+    }
+    // Chưa có phân công quầy (câu hỏi mở 6): hỏi quầy hay nơi nộp thì trả lời nộp tại Trung tâm, không nêu số quầy
+    const hoiNoiNop = /\bquay\b|\bo dau\b|\bnop dau\b/.test(n);
+    const y = hoiNoiNop ? "nop" : /may ngay|bao lau|thoi han|bao nhieu ngay/.test(n) ? "th" : /\bphi\b|le phi|bao nhieu tien|mat tien/.test(n) ? "phi" : /giay to|ho so|can gi|chuan bi|mang theo/.test(n) ? "hs" : /cach nop|truc tuyen|online/.test(n) ? "nop" : null;
+    const tTim = timThuTuc(n);
+    if (hoiNoiNop && !tTim) {
+      const lv = timLinhVuc(n);
+      if (lv || !dangNoiVe) return themTin("bot", `${lv ? `Hồ sơ lĩnh vực <b>${esc(lv.ten)}</b>` : "Hồ sơ"} nộp tại <b>${NOI_NOP}</b>, địa chỉ: ${esc(TT.diaChi)}.`);
+    }
+    const t = tTim || (y ? dangNoiVe : null);
+    if (!t) {
+      return themTin("bot", `Xin lỗi, tôi chưa có câu trả lời cho câu hỏi này. Bạn có thể gọi Trung tâm hoặc hỏi cán bộ tại quầy hướng dẫn.
+        <div class="msg-actions"><a class="btn btn-secondary" href="tel:${telTrungTam}">${icon("phone")}Gọi Trung tâm</a><span class="btn btn-secondary" aria-disabled="true">Zalo (chờ link)</span></div>`);
+    }
+    dangNoiVe = t;
+    const ten = `<b>${esc(t.ten)}</b>`;
+    const xem = `<div class="msg-actions"><button type="button" class="btn btn-secondary" data-mo="${esc(t.ma)}">Xem chi tiết</button>${nutCongDvc(t.ma)}</div>`;
+    if (y === "th") return themTin("bot", `${ten}: ${thoiHan(t) ? `thời hạn giải quyết ${esc(thoiHan(t))}.` : "dữ liệu chưa ghi rõ thời hạn, bạn xem chi tiết trên Cổng DVC Quốc gia hoặc hỏi cán bộ tại quầy."}${xem}`);
+    if (y === "phi") return themTin("bot", `${ten}: ${esc(t.phi || "chưa có thông tin phí")}.${xem}`);
+    if (y === "nop") return themTin("bot", `${ten} nộp qua: ${esc(t.nop.join(", ") || "chưa có thông tin")}.${t.nop.includes("Trực tiếp") ? ` Nộp trực tiếp tại ${NOI_NOP}.` : ""}${xem}`);
+    if (y === "hs" && t.hs.length) return themTin("bot", `${ten} cần chuẩn bị:<ul>${t.hs.slice(0, 5).map((x) => `<li>${esc(rutGon(x.t, 120))}</li>`).join("")}</ul>${xem}`);
+    return themTin("bot", `Tôi tìm thấy thủ tục ${ten} (${esc(t.lv)}). Bạn có thể hỏi tiếp: “mấy ngày?”, “cần giấy tờ gì?”, “phí bao nhiêu?”.${xem}`);
+  };
+
+  // ---------- Kiosk (F09): không tự làm mới, không đếm giờ (BR-2); người dân bấm "Bắt đầu lại" ----------
+  // Xoá hội thoại trợ lý, đóng popup, xoá từ khoá/bộ lọc, về trang chủ. Thay mục lịch sử để "Quay lại" không mở lại trạng thái cũ.
+  const batDauLai = () => {
+    speechSynthesis?.cancel?.();
+    msgs.innerHTML = ""; dangNoiVe = null; input.value = "";
+    chat.hidden = true; fab.setAttribute("aria-expanded", "false");
+    moTrongTrang = false; nutDaMo = null;
+    history.replaceState(null, "", "#/");
+    route = { path: "/", q: new URLSearchParams() };
+    anPopup(); veTrang(); scrollTo(0, 0);
+    main.focus({ preventScroll: true });
+  };
+  nutBatDauLai.addEventListener("click", batDauLai);
+  const datKiosk = (bat) => {
+    kiosk = bat;
+    document.documentElement.classList.toggle("kiosk", bat);
+    $("#p-kiosk").setAttribute("aria-pressed", String(bat));
+    $("#p-kiosk").textContent = bat ? "Chế độ kiosk: bật" : "Chế độ kiosk";
+    try { sessionStorage.setItem("kiosk", bat ? "1" : "0"); } catch { /* bỏ qua */ }
+    TRANG[route.path]?.ketQua?.();
+  };
+  $("#p-kiosk").addEventListener("click", () => datKiosk(!kiosk));
+  $("#p-che-do").addEventListener("change", (e) => { cheDo = e.target.value; TRANG[route.path]?.ketQua?.(); });
+
+  // ---------- Khởi động ----------
+  let kioskLuu = false;
+  try { kioskLuu = sessionStorage.getItem("kiosk") === "1"; } catch { /* bỏ qua */ }
+  veTrang();
+  xuLyPopup();
+  if (kioskLuu) datKiosk(true);
+})();
+</script>
+</body>
+</html>

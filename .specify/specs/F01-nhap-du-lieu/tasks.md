@@ -1,0 +1,191 @@
+# F01 · Nhập dữ liệu từ Excel — tasks
+
+`[P]` = chạy song song được với task liền trước. Mục, bảng nhắc tới trong task là của `plan.md`.
+
+Bản 2026-10-12, sửa theo trả lời nhóm A và spec mới (BR-9–BR-18, AC-7–AC-16):
+
+- Giữ số task cũ. Task mới đánh số tiếp (T17–T19) và đặt đúng chỗ theo thứ tự làm.
+- "(sửa 2026-10-12)" = nội dung task đổi. Các task này chưa bắt đầu, nên không phải làm lại phần nào đã code.
+- T01, T02 đã xong, không phải làm lại. Câu `HuongDan` trong `.resx` (T01) được bổ sung ở T05, T08.
+
+Điều kiện bắt đầu:
+
+- Làm ngay (db-dev): F00 T15 (`TiengViet.BoKyTuVoHinh`), T03, T17.
+- T04 sau F00 T15. T05–T11 sau T03, T04.
+- T12 sau T05–T11 và T17.
+- T18 sau T03; T19 sau T18.
+- Các đề xuất ở `plan.md` §14 nhóm C làm theo đề xuất nếu người dùng không phản đối. Người dùng chọn khác thì planner sửa plan trước.
+
+Bản 2026-10-12 lần 2 (nguồn dữ liệu Mẫu — F00 plan §9; khớp mã đã làm ở T04–T12):
+
+- T19 gộp vào F00 T29 (`AddChatbot(nguon)`). Phần xoá của T18 chuyển sang kho câu chưa trả lời ở F00 T28.
+- Sửa tiêu chí đã đánh dấu xong của T12, T17 theo số liệu thật (không phải làm lại).
+- T20 mới (db-dev): đổi nhãn mục "Xã" — chỉ làm theo `plan.md` §14 câu 19 nếu người dùng không phản đối; làm lúc nào cũng được.
+
+- [x] T01 [db-dev] Gói và khung công cụ nhập:
+  - ClosedXML 0.105.1 vào nhóm "Công cụ nhập" của `Directory.Packages.props` (ghi lý do theo §7) và `PackageReference` trong Import.
+  - `appsettings.json` của Import (EF log mức Warning; chép ra thư mục build; content root = `AppContext.BaseDirectory`).
+  - `Resources/ThongBao.resx` + lớp truy cập có kiểu.
+  - `Program.cs` → `UngDung.ChayAsync` (public; nhận args, `IServiceProvider`, `TextWriter` ra/lỗi; trả mã thoát), `MaThoat` (§5.3).
+  - Phân tích lệnh `nhap`/`xuat`/`tao-mau`/`help` (§5.1), console UTF-8, hướng dẫn lệnh lấy từ `.resx`.
+  - file: `src/BackEnd/Directory.Packages.props`, `src/BackEnd/DichVuCong.Import/{DichVuCong.Import.csproj, Program.cs, UngDung.cs, MaThoat.cs, Lenh/, appsettings.json, Resources/}`, `packages.lock.json`
+  - xong khi:
+    - Build sạch ở Debug và Release.
+    - Không tham số → in hướng dẫn, mã 0. Lệnh lạ → mã 2. Thiếu chuỗi kết nối khi chạy `nhap` → mã 3, thông báo nêu tên khoá, không in giá trị.
+    - `dotnet list package --vulnerable --include-transitive` không còn mức High/Critical.
+    - `DichVuCong.Api.deps.json` không có ClosedXML. Lockfile ghi SixLabors.Fonts 1.x.
+- [x] T02 [backend-dev → điều phối làm] [P] `Tests.csproj`: thêm `ProjectReference` tới `DichVuCong.Import` (ClosedXML đi kèm qua tham chiếu này) — file: `src/BackEnd/DichVuCong.Tests/DichVuCong.Tests.csproj`, `packages.lock.json` — xong khi: `dotnet test --solution src/BackEnd/DichVuCong.sln` xanh như trước.
+- [x] T03 [db-dev] (sửa 2026-10-12) Entity, cấu hình và migration theo §4:
+  - 15 entity + `IEntityTypeConfiguration`, `DbSet` trong `AppDbContext`. Enum `MucDo`, `MucTrungTam`. Kiểu JSON `BuocTrinhTu` / `CachThucNop` / `GiayTo` / `VanBanCanCu` (`ComplexCollection(...).ToJson()`).
+  - So với bản trước: `thu_tuc` không có `uu_tien`, `thuong_gap`; có `thu_tu_thuong_gap` (UNIQUE, CHECK > 0), `yeu_cau_dieu_kien`; `thanh_phan_ho_so` là `jsonb`. `o_dich_vu.url` được null. `cau_hoi_mau.tra_loi` được null, thêm `muc_trung_tam` + CHECK đúng một trong hai. Bảng mới `chu_de_goi_y`. Index `cau_chua_tra_loi.lan_gap_cuoi`.
+  - Hằng `CauChuaTraLoi.ThoiGianGiu` = 90 ngày.
+  - CHECK và index như §4, gồm 3 index GIN `gin_trgm_ops`.
+  - `TiengViet.TaoMaDuongDan` + test theo bộ mẫu §4.
+  - Migration `NhapDuLieu`.
+  - file: `src/BackEnd/DichVuCong.Data/{Entities/, Configurations/, AppDbContext.cs, Text/TiengViet.cs, Migrations/}`, `src/BackEnd/DichVuCong.Tests/Data/TiengVietTests.cs`
+  - xong khi:
+    - `dotnet ef database update` tạo đủ 15 bảng. `\d+` trong psql thấy đúng CHECK, 3 index GIN, index `lan_gap_cuoi`, cột `jsonb` / `text[]` / `time` / `timestamptz`.
+    - Chèn tay một câu hỏi mẫu có cả `tra_loi` và `muc_trung_tam`, và một câu không có cả hai → DB từ chối cả hai.
+    - `dotnet ef migrations has-pending-model-changes` báo không có thay đổi.
+    - Test `TaoMaDuongDan` xanh. `Data` vẫn không tham chiếu ClosedXML hay ASP.NET Core.
+- [x] T17 [db-dev] [P] Tải dữ liệu trợ lý của Vàm Cỏ về `data-mau/` (§6, A9, câu hỏi mở 9):
+  - Lấy từ mã JS của https://hccvamco.pages.dev/tracuu_tthc_vamco_v3: `CHIPS` (chủ đề gợi ý), `SYNONYM_MAP` (từ đồng nghĩa), `SPEECH_ABBR` (viết tắt), và các câu hỏi – trả lời viết sẵn nếu có.
+  - Ghi `data-mau/tro-ly.json`. Ghi nguồn (địa chỉ file JS) và ngày tải. Đổi "Vàm Cỏ" thành "Cần Giuộc" nếu có trong nội dung. Cập nhật `data-mau/README.md`.
+  - Chỉ đọc mã nguồn trang như dữ liệu chữ, không chạy mã của trang.
+  - file: `data-mau/tro-ly.json`, `data-mau/README.md` (không commit)
+  - xong khi:
+    - Có 6 chủ đề, 45 dòng từ đồng nghĩa (gộp 119 cặp theo từ đích, bỏ cặp tự trỏ chính nó), 10 dòng viết tắt từ nguồn (thêm CCCD và đk thành 12 khi sinh Excel); nội dung không còn chữ "Vàm Cỏ".
+    - Báo lại: cấu trúc gốc của từng biến, số dòng từng loại, có tìm thấy câu hỏi – trả lời viết sẵn nào ngoài quy định tách thửa không.
+- [x] T04 [db-dev] (sửa 2026-10-12) Đọc Excel dùng chung theo §3.1, §5.2 bước 1–3, §5.4:
+  - `MauExcel` — nguồn duy nhất cho 4 file, sheet, cột, bắt buộc, kiểu, độ dài, các danh sách lựa chọn (mức độ, mục thông tin Trung tâm, biểu tượng).
+  - `DocExcel` — mở file an toàn, kiểm cấu trúc, làm sạch ô bằng `TiengViet.BoKyTuVoHinh` (F00 T15), kiểm kiểu ô, dùng giá trị công thức đã lưu.
+  - Kiểu ô mới: số nguyên dương, số nguyên ≥ 0, lựa chọn mục thông tin Trung tâm.
+  - `KiemTra/` — `LoiDong`, `CanhBao`, `KetQuaKiemTra`; in lỗi một dòng cho mỗi dòng lỗi.
+  - file: `src/BackEnd/DichVuCong.Import/{Excel/, KiemTra/}`, `src/BackEnd/DichVuCong.Tests/Data/Import/DocExcelTests.cs`
+  - xong khi:
+    - Có test xanh cho từng trường hợp: thiếu sheet; thiếu cột; cột lạ → lỗi; cột "Ghi chú" bỏ qua; sheet chỉ có tiêu đề → 0 dòng, không lỗi; tên sheet, cột khác hoa thường và dấu vẫn khớp; ô số ở cột mã → lỗi; ô đánh dấu khác `x` → lỗi; số nguyên dương (`2a`, `0`, `1.5` → lỗi); số nguyên ≥ 0 (`0` được, `một` → lỗi); giờ dạng chữ và dạng giờ Excel; danh sách trong ô (`;` và xuống dòng); dòng trống bỏ qua; U+200B–U+200F, U+FEFF và ký tự điều khiển bị bỏ; ô `#N/A` → lỗi.
+    - Sai đuôi, `.xlsm`, file quá 20 MB → mã 2.
+    - Đọc được file đang mở trong Excel.
+- [x] T05 [db-dev] (sửa 2026-10-12) Loại `thu-tuc` (§3.2, §3.6, §4):
+  - Kiểm sheet Thủ tục (BR-3, BR-14), sheet Thường gặp (BR-15), sheet con gồm số bản (BR-16, Q10). Không còn cột ưu tiên (BR-10).
+  - Cảnh báo: lĩnh vực khác cách viết cùng mã; thời hạn chỉ ghi "Khác".
+  - Ghi: xoá rồi chèn `thu_tuc` + `linh_vuc`, upsert `lan_nhap` trong cùng transaction, advisory lock, kiểm migration chưa chạy (§5.2 bước 6).
+  - In số bản ghi (AC-1), có "Thường gặp: n", không có mục ưu tiên. Bổ sung "thường gặp" vào câu `HuongDan` trong `.resx`.
+  - file: `src/BackEnd/DichVuCong.Import/Loai/ThuTuc/`, `src/BackEnd/DichVuCong.Import/Resources/ThongBao.resx`, `src/BackEnd/DichVuCong.Tests/Data/Import/ThuTucTests.cs`
+  - xong khi:
+    - Test xanh cho từng dòng §3.6 của Thủ tục, Thường gặp và sheet con.
+    - File có 3 dòng lỗi → kết quả kiểm có đúng 3 dòng, đúng số dòng Excel (AC-2).
+    - AC-8: sheet Thường gặp 16 dòng → in "Thường gặp: 16"; đổi thứ tự hai dòng → thứ tự lưu đổi theo; bỏ 1 dòng → 15.
+    - AC-13: mã 9.999999 ở sheet Thường gặp → đúng 1 dòng lỗi; mã 1.013980 ở ô số (thủ tục không có dòng con) → đúng 1 dòng lỗi.
+    - AC-14: giấy tờ ghi 1 bản chính, 0 bản sao → lưu 1 và 0; ghi 0 và 0 → lưu null, null; ghi "một" → lỗi. "Yêu cầu, điều kiện" lưu đúng.
+    - AC-16: tên thủ tục có U+200E giữa "k" và "ý" → `ten` lưu không còn U+200E; `ten_tim_kiem` chứa "dang ky khai sinh".
+    - File có cột "Ưu tiên" → lỗi cột lạ.
+    - Thứ tự danh sách con giữ đúng thứ tự dòng. Lĩnh vực khác cách viết cùng mã → gộp + cảnh báo.
+    - Chạy thật trên DB dev với file nhỏ: in số bản ghi; nhập lại lần 2 → dữ liệu không đổi.
+- [x] T06 [db-dev] (sửa 2026-10-12) Loại `phan-cong` (§3.3):
+  - Kiểm và ghi `phan_cong_linh_vuc`, `nhan_su`, `lan_nhap`. Hai sheet được không có dòng nào (BR-9).
+  - Cảnh báo lĩnh vực không có trong danh mục thủ tục (bỏ qua khi `--chi-kiem` không có chuỗi kết nối).
+  - file: `src/BackEnd/DichVuCong.Import/Loai/PhanCong/`, `src/BackEnd/DichVuCong.Tests/Data/Import/PhanCongTests.cs`
+  - xong khi:
+    - Test xanh cho §3.6: lĩnh vực trùng, quầy không phải số nguyên dương, quầy trống được nhận (BR-5).
+    - AC-7: file hai sheet chỉ có tiêu đề → nhập thành công, in "Phân công: 0 · Nhân sự: 0".
+    - AC-13: quầy "2a" → đúng 1 dòng lỗi.
+    - Chạy thật in số bản ghi.
+- [x] T07 [db-dev] (sửa 2026-10-12) Loại `trung-tam` (§3.4):
+  - Kiểm BR-8, email, điện thoại, URL `http(s)`, mục lạ hoặc trùng, giờ làm việc 7 dòng (BR-17), ô dịch vụ (link không bắt buộc — BR-11; danh sách biểu tượng mới).
+  - Cảnh báo khi không có liên kết tên "Cổng Dịch vụ công Quốc gia" (§14 câu 17).
+  - Ghi 4 bảng + `lan_nhap`.
+  - file: `src/BackEnd/DichVuCong.Import/Loai/TrungTam/`, `src/BackEnd/DichVuCong.Tests/Data/Import/TrungTamTests.cs`
+  - xong khi:
+    - Test thiếu từng mục trong 5 mục → báo đúng tên mục. Riêng thiếu email → thông báo có "Email" (AC-6).
+    - `javascript:alert(1)` và `data:` ở mọi cột địa chỉ web → lỗi.
+    - AC-9: ô "Đánh giá hài lòng" trống link → nhập được, `url` null.
+    - AC-13: ô dịch vụ có link `javascript:alert(1)` → đúng 1 dòng lỗi; Thứ Hai sáng từ 11:30 đến 07:00 → đúng 1 dòng lỗi.
+    - AC-15: 7 dòng (Thứ Hai – Thứ Sáu có giờ, Thứ Bảy, Chủ nhật trống) → nhập được, lưu 5 ngày.
+    - Thứ trùng, giờ thiếu một nửa cặp → lỗi. Biểu tượng `mot-cua` → lỗi.
+    - Chạy thật in số bản ghi.
+- [x] T08 [db-dev] (sửa 2026-10-12) Loại `tro-ly` (§3.5):
+  - Câu hỏi mẫu: đúng một trong câu trả lời và mục thông tin Trung tâm (BR-12); câu hỏi trùng sau chuẩn hoá; mã thủ tục liên quan phải có trong `thu_tuc` (hoặc trong file thủ tục khi chạy `tat-ca`); độ dài ≤ 500.
+  - Sheet Chủ đề gợi ý (BR-13): `LinhVucMa` = `TaoMaDuongDan(Lĩnh vực)`; cảnh báo lĩnh vực không có trong danh mục.
+  - Từ đồng nghĩa, viết tắt trùng sau chuẩn hoá.
+  - Ghi `cau_hoi_mau` + `cau_hoi_mau_cach_hoi` (câu chính là `ThuTu` 1), `chu_de_goi_y`, `tu_dong_nghia`, `viet_tat`, `lan_nhap`. Bổ sung "chủ đề gợi ý" vào câu `HuongDan` trong `.resx`.
+  - file: `src/BackEnd/DichVuCong.Import/Loai/TroLy/`, `src/BackEnd/DichVuCong.Import/Resources/ThongBao.resx`, `src/BackEnd/DichVuCong.Tests/Data/Import/TroLyTests.cs`
+  - xong khi:
+    - Test xanh cho từng dòng §3.6 của 4 sheet; `đk` và `ĐK` → lỗi trùng.
+    - AC-10: câu gắn mục "Địa chỉ", ô câu trả lời trống → nhập được; thêm một câu có cả hai và một câu không có cả hai → không nhập, đúng 2 dòng lỗi.
+    - AC-11: 6 chủ đề → in "Chủ đề gợi ý: 6", lưu đúng thứ tự; một chủ đề trống tên lĩnh vực → không nhập, báo dòng đó.
+    - Chạy thật in số bản ghi.
+- [x] T09 [db-dev] `nhap tat-ca <thư-mục>` và `--chi-kiem` (§5.1):
+  - Đủ 4 file, kiểm cả 4 trước khi ghi, ghi theo thứ tự trong một transaction.
+  - Khi kiểm, mã thủ tục liên quan, lĩnh vực của chủ đề và của phân công so với file thủ tục cùng lần chạy.
+  - `--chi-kiem` không mở transaction ghi.
+  - file: `src/BackEnd/DichVuCong.Import/Lenh/LenhNhap.cs`
+  - xong khi:
+    - Thiếu một file → mã 2.
+    - Một file có lỗi → mã 1, không bảng nào đổi.
+    - `--chi-kiem` với file hợp lệ → mã 0, DB không đổi (kể cả `lan_nhap`).
+    - Hai lệnh `nhap` chạy cùng lúc → lệnh sau trả mã 3.
+- [x] T10 [db-dev] (sửa 2026-10-12) `xuat cau-chua-tra-loi <file>` (§5.1, §10):
+  - Cột và tiêu đề lấy từ `.resx`; giờ Việt Nam; sắp xếp như §5.1.
+  - Chỉ xuất câu có lần gặp cuối trong `CauChuaTraLoi.ThoiGianGiu`; giờ hiện tại lấy qua `TimeProvider`.
+  - Ô câu hỏi luôn ghi kiểu chuỗi.
+  - Không ghi đè file đã có.
+  - file: `src/BackEnd/DichVuCong.Import/Lenh/LenhXuat.cs`, `src/BackEnd/DichVuCong.Tests/Data/Import/XuatTests.cs`
+  - xong khi:
+    - Với vài dòng chèn tay vào `cau_chua_tra_loi`: file ra có đúng 3 cột, đúng số lần gặp, đúng giờ +7.
+    - Câu gặp lần cuối 91 ngày trước không có trong file; câu 89 ngày trước có (F06 AC-27, `TimeProvider` giả).
+    - Câu bắt đầu bằng `=` hiện nguyên chữ khi mở bằng Excel.
+    - File đã tồn tại → mã 2. Bảng trống → file chỉ có dòng tiêu đề.
+- [x] T11 [db-dev] (sửa 2026-10-12) `tao-mau <thư-mục>` (§3.1):
+  - 4 file trống theo `MauExcel`, gồm sheet Thường gặp, Chủ đề gợi ý và các cột mới.
+  - Cột chữ định dạng Text; danh sách chọn cho mức độ, cột đánh dấu, mục thông tin Trung tâm, biểu tượng (danh sách mới); sheet "Giờ làm việc" điền sẵn 7 thứ.
+  - Sheet "Hướng dẫn" lấy câu chữ từ `.resx`.
+  - file: `src/BackEnd/DichVuCong.Import/Lenh/LenhTaoMau.cs`, `src/BackEnd/DichVuCong.Import/Excel/GhiExcel.cs`, `src/BackEnd/DichVuCong.Tests/Data/Import/TaoMauTests.cs`
+  - xong khi:
+    - Test: đọc lại 4 file vừa tạo → không lỗi cấu trúc, 0 bản ghi (riêng trung-tam báo thiếu 5 mục bắt buộc — đúng BR-8).
+    - Mở bằng Excel: gõ `- Tờ khai` vào cột chữ không bị hiểu là công thức.
+- [x] T12 [db-dev] (sửa 2026-10-12) Project `DichVuCong.DuLieuMau` — sinh bản đầu của dữ liệu thật (§6):
+  - Console, `IsPublishable=false`, có trong `.sln`, tham chiếu Import.
+  - Chuyển `data-mau/*.json` + `data-mau/tro-ly.json` (T17) → 4 file Excel qua `MauExcel`/`GhiExcel`, theo bảng chuyển đổi §6: không có phân công, nhân sự; 16 thường gặp theo `du-lieu.md`; không có ưu tiên; mã đơn vị `H53.183`; Trung tâm theo giá trị đã chốt; 6 ô dịch vụ (2 ô trống link); 6 chủ đề gợi ý; nhóm câu hỏi về Trung tâm.
+  - Tham số `--nguoi-chiu-trach-nhiem` (§14 câu 14). Không ghi họ tên nào vào mã.
+  - file: `src/BackEnd/DichVuCong.DuLieuMau/`, `src/BackEnd/DichVuCong.sln`
+  - xong khi:
+    - `dotnet run --project src/BackEnd/DichVuCong.DuLieuMau -- data-mau data-mau/excel --nguoi-chiu-trach-nhiem "<tên giả>"` rồi `… DichVuCong.Import -- nhap tat-ca data-mau/excel` → mã 0, số bản ghi khớp §6.
+    - Không có tham số → `nhap tat-ca` mã 1, báo thiếu "Người chịu trách nhiệm".
+    - Chạy lại lần 2 → dữ liệu không đổi.
+    - (sửa tiêu chí 2026-10-12) Sau khi nhập, không cột chữ nào còn U+200E, U+200F. Nguồn có 30 chỗ, đều ở thành phần hồ sơ và trình tự; tên thủ tục không có, nên tiêu chí cũ "gõ 'dang ky' tìm được thủ tục có U+200E" không áp dụng — AC-16 thử bằng file soạn riêng (T05).
+    - Báo thời gian và bộ nhớ khi nhập (§9).
+    - Build Release sạch; bản publish của Import không chứa `DichVuCong.DuLieuMau.dll`.
+- [x] T18 [chatbot-dev] [P] Việc định kỳ xoá câu chưa trả lời quá 90 ngày (§8.2, F06 BR-12):
+  - `BackgroundService` `XoaCauChuaTraLoiHetHan`: chạy lúc khởi động rồi mỗi giờ; `ExecuteDeleteAsync` dòng có `lan_gap_cuoi < bây giờ − CauChuaTraLoi.ThoiGianGiu`; giờ lấy qua `TimeProvider`.
+  - Log số dòng đã xoá, không log nội dung câu. Lỗi DB → log Warning, thử lại ở lượt sau, API không dừng.
+  - `ChatbotServiceCollectionExtensions.AddChatbot()` đăng ký việc này.
+  - file: `src/BackEnd/DichVuCong.Api/Features/Chatbot/{XoaCauChuaTraLoiHetHan.cs, ChatbotServiceCollectionExtensions.cs}`
+  - xong khi:
+    - Build sạch.
+    - Chạy API với DB dev, chèn tay một câu `lan_gap_cuoi` 91 ngày trước và một câu 89 ngày trước → sau lượt chạy lúc khởi động chỉ còn câu 89 ngày.
+    - Tắt DB khi API đang chạy → log Warning, API vẫn trả `/health/live` 200.
+  - Sửa 2026-10-12: câu xoá chuyển vào `KhoCauChuaTraLoiPostgreSql`, việc định kỳ gọi `IKhoCauChuaTraLoi` — làm ở F00 T28.
+- [x] T19 [backend-dev] Gọi `AddChatbot()` trong `AddApiServices` — **gộp vào F00 T29 (2026-10-12)**: `AddApiServices` gọi `AddChatbot(nguon)` theo nguồn dữ liệu. Đánh dấu xong khi F00 T29 xong.
+- [ ] T13 [code-reviewer] Review F01 (gồm T18 và F00 T15; T19 và phần sửa T18 được review ở F00 T30) theo `CLAUDE.md`, `plan.md` → `.specify/specs/F01-nhap-du-lieu/result/review.md` — xong khi: có kết luận ĐẠT/KHÔNG ĐẠT; lỗi Chặn (nếu có) đã được agent sở hữu sửa.
+- [ ] T14 [tester] [P] (sửa 2026-10-12) `testcases.md`:
+  - AC-1…AC-16, BR-1…BR-18.
+  - Quy tắc §3.6; mã thoát §5.3; bảo mật §10 (URL `javascript:`, công thức trong file xuất); việc xoá định kỳ §8.2.
+  - Bộ file thử soạn riêng, không dựa vào bản đầu (rủi ro 6). File AC-13 theo ghi chú lỗi kéo theo ở §3.6.
+  - file: `.specify/specs/F01-nhap-du-lieu/testcases.md`
+  - xong khi: mỗi BR/AC có ít nhất một ca thử, ghi rõ file vào và kết quả mong đợi.
+- [ ] T15 [tester] (sửa 2026-10-12) Integration test với PostgreSQL (§11, A10):
+  - Fixture tạo DB riêng mỗi lần chạy, chạy migration, xoá khi xong; không có biến môi trường `ConnectionStrings__DichVuCongTest` thì bỏ qua.
+  - Gọi `UngDung.ChayAsync`.
+  - Phủ: AC-1…AC-16 ở mức DB; BR-1 bằng trigger tạm làm lỗi khi chèn; BR-6 so toàn bộ bảng sau 2 lần nhập; BR-7 `lan_nhap` không đổi khi lỗi; `tat-ca` có một file lỗi; việc xoá định kỳ (T18) chạy một lượt với `TimeProvider` giả, qua `KhoCauChuaTraLoiPostgreSql` (F00 T28).
+  - file: `src/BackEnd/DichVuCong.Tests/Integration/Import/`, `src/BackEnd/DichVuCong.Tests/Integration/Chatbot/`
+  - xong khi: `dotnet test` xanh khi có DB test; được bỏ qua (không đỏ) khi không có.
+- [ ] T16 [tester] Chạy toàn bộ `testcases.md` + chạy tay với bản đầu (T12) → `.specify/specs/F01-nhap-du-lieu/result/test.md` — xong khi: mọi ca có kết quả. Các AC có phần giao diện (AC-3, AC-7, AC-8, AC-9, AC-11, AC-12, AC-14, AC-15, AC-16) kiểm phần DB ở đây, phần giao diện ở F02–F08. Đạt hết → đổi `trang_thai` của `spec.md` sang `xong`.
+- [ ] T20 [db-dev] (thêm 2026-10-12 — chỉ làm theo `plan.md` §14 câu 19, nếu người dùng không phản đối) Đổi nhãn mục "Xã" của sheet Trung tâm thành "Đơn vị hành chính (ghi đủ)":
+  - `MauExcel.MucXa` đổi giá trị; giữ nhãn "Tỉnh". Nhãn cũ "Xã" thành mục lạ.
+  - Sheet "Hướng dẫn" của `tao-mau` (nếu có nhắc tên mục) đổi theo.
+  - `DuLieuMau` dùng hằng nên tự ra nhãn mới; sinh lại `data-mau/excel/`. File dữ liệu mẫu JSON (F00 T27) không đổi: tên cột ở entity là `Xa`.
+  - file: `src/BackEnd/DichVuCong.Import/Excel/MauExcel.cs`, `src/BackEnd/DichVuCong.Import/Resources/ThongBao.resx` (nếu có), `src/BackEnd/DichVuCong.Tests/Data/Import/{TrungTamTests.cs, NhapTatCaTests.cs}`
+  - xong khi:
+    - `tao-mau` ra sheet Trung tâm có mục "Đơn vị hành chính (ghi đủ)"; file có mục này → `trung_tam.xa` lưu đúng; file còn mục "Xã" → lỗi mục lạ, báo theo sheet.
+    - `DuLieuMau` sinh Excel rồi `nhap tat-ca --chi-kiem` → hợp lệ. `dotnet test` xanh.

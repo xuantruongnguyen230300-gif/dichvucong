@@ -1,0 +1,221 @@
+---
+id: C01
+ten: Thành phần giao diện dùng chung
+trang_thai: dang-lam
+nguon: Yêu cầu của người dùng ngày 2026-10-09; quyết định của bên điều phối ngày 2026-10-09 (số trang trên địa chỉ); .specify/design-system.md (§3 Token, §5 Component, §6 Truy cập, §7 Nội dung — người dùng duyệt 2026-10-12); prototype .specify/prototype/index.html (người dùng duyệt 2026-10-12); câu trả lời của người dùng ngày 2026-10-12 (câu hỏi mở 7, 8, 22, 29, 30, 36, 37; nút "Xoá bộ lọc" trong thông báo không có kết quả); kế hoạch C01 §9 Cần hỏi 2 (trạng thái chip, nút chuyển dạng đọc là "đã nhấn" — người dùng chấp nhận) và §5 (thời gian lọc); góp ý của tester 2026-10-12 (AC-10, AC-11, AC-14, AC-23)
+---
+
+# C01 · Thành phần giao diện dùng chung
+
+## Mục tiêu
+
+Mọi màn hình dùng chung một bộ thành phần, cùng hình thức và cùng cách dùng. Người dân quen ở một trang là dùng được ở mọi trang, kể cả khi dùng bàn phím, trình đọc màn hình hay kiosk.
+
+## Phạm vi
+
+- Trong: nút; liên kết ra trang ngoài; ô tìm kiếm; chip lọc; nút chuyển dạng thẻ / dạng bảng; danh sách dạng bảng và dạng thẻ; phân trang; popup; nhãn trạng thái; trạng thái đang tải, lỗi, không có kết quả; ô dịch vụ; nút trợ lý nổi.
+- Ngoài:
+  - Màu, cỡ chữ, khoảng cách, bo góc, chiều cao: xem design-system §3, không chép lại ở đây.
+  - Thành phần riêng của một chức năng: thẻ thủ tục và nội dung popup chi tiết (F03); tab cấp xã / cấp tỉnh, thống kê (F04); lưới lĩnh vực và QR (F05); khung trợ lý (F06); khối giờ làm việc (F02); đầu trang, điều hướng, chân trang (F08); dòng nhắc đăng xuất và nút "Bắt đầu lại" trên kiosk (F09).
+  - Dữ liệu và câu chữ nghiệp vụ trong từng thành phần: do spec chức năng quy định.
+
+## Quy tắc nghiệp vụ
+
+- BR-1: Quy tắc chung cho mọi thành phần:
+  - Bàn phím: tới được bằng Tab theo thứ tự đọc, Shift+Tab đi ngược, Enter để kích hoạt (nút nhận thêm phím cách). Phần tử không bấm được thì Tab bỏ qua.
+  - Luôn nhìn thấy phần tử đang được chọn (focus), theo design-system §6. Trên nền xanh đậm thì viền focus màu sáng.
+  - Kích thước theo design-system §3 "Chiều cao điều khiển". Vùng bấm không nhỏ hơn 24 × 24 px.
+  - Chế độ kiosk (F09): chữ và chiều cao điều khiển tự phóng to theo design-system §3; không chữ nào bị cắt hay tràn.
+  - Tương phản theo design-system §6.
+  - Không chỉ dựa vào màu. Các trạng thái đang chọn, đang xem, vô hiệu luôn có thêm một dấu hiệu khác: biểu tượng, chữ, gạch chân hoặc viền nét đứt.
+  - Câu chữ lấy từ file ngôn ngữ (F00 BR-12), kể cả tên đọc cho trình đọc màn hình.
+  - Phần tử chỉ có biểu tượng phải có tên để trình đọc màn hình đọc. Biểu tượng trang trí thì trình đọc màn hình bỏ qua.
+  - Hiệu ứng chuyển động (mở, đóng, di chuột qua) chỉ được đổi độ mờ và vị trí, mỗi lần ≤ 150 ms; không có hiệu ứng nào chạy liên tục (design-system §3, §9). Máy đã bật giảm chuyển động thì tắt hẳn mọi hiệu ứng.
+  - Đổi màu khi di chuột qua thì đổi ngay, không có hiệu ứng chuyển dần. Như vậy là đúng quy tắc trên, không phải thiếu hiệu ứng.
+  - Thành phần giống nhau ở mọi chức năng. Chức năng chỉ truyền dữ liệu và câu chữ vào.
+  - Không thành phần nào làm cả trang phải cuộn ngang. Riêng vùng bảng xem BR-7.
+- BR-2: Nút.
+  - Mục đích: làm một việc ngay trên trang, như mở popup, thử lại, xoá lọc, gửi câu hỏi. Đi tới trang khác thì dùng liên kết, không dùng nút.
+  - Loại theo design-system §5: chính, nhấn, phụ, nền trong; nút chỉ có biểu tượng; nút bật/tắt. Kiểu nhấn chỉ dùng cho liên kết "Xem và nộp trên Cổng DVC" (F03 BR-4) — liên kết ra trang ngoài trình bày như nút. Không còn nút "Nộp trực tuyến" (câu hỏi mở 7).
+  - Chữ trên nút ghi rõ việc sẽ làm (design-system §7) và không xuống dòng.
+  - Trạng thái:
+    - Thường, di chuột, đang được chọn (focus).
+    - Đang xử lý: có chỉ báo, giữ nguyên kích thước, bấm thêm không có tác dụng.
+    - Vô hiệu: không bấm được; trình đọc màn hình đọc là không dùng được.
+    - Nút bật/tắt: khi bật và khi tắt trông khác nhau; trình đọc màn hình đọc được đang bật hay tắt.
+- BR-3: Liên kết ra trang ngoài.
+  - Mục đích: mở trang của đơn vị khác (Cổng DVC, hệ thống của tỉnh, mạng xã hội).
+  - Mở ở tab mới. Có biểu tượng "mở trang mới", và trình đọc màn hình đọc thêm "(mở trang mới)". Chữ ghi rõ đích đến (design-system §7).
+  - Trang được mở không điều khiển được trang này và không biết địa chỉ trang đang xem.
+  - Số điện thoại thì mở trình gọi, email thì mở ứng dụng thư; không mở tab mới.
+  - Chỉ nhận địa chỉ web (`http`, `https`), số điện thoại và email. Địa chỉ dạng khác trong dữ liệu (link sai định dạng) thì hiện như chữ thường, không bấm được.
+  - Ranh giới với F08 BR-5: mục không có dữ liệu thì ẩn theo F08 BR-5; mục có dữ liệu nhưng link sai định dạng thì xử lý theo quy tắc này. Riêng ô dịch vụ: BR-12.
+  - Trên kiosk: mỗi nơi có liên kết tới Cổng DVC có một dòng nhắc đăng xuất, không lặp trên từng liên kết (F09 BR-4).
+- BR-4: Ô tìm kiếm.
+  - Mục đích: lọc danh sách đang xem theo từ khoá. Tìm trên trường nào do chức năng quy định (F03 BR-1, F05 BR-3).
+  - Có nhãn để trình đọc màn hình đọc (nhãn có thể ẩn trên màn hình); chữ gợi ý trong ô không thay cho nhãn. Có biểu tượng kính lúp. Không có nút micro.
+  - Kết quả cập nhật ngay khi gõ, không cần Enter hay nút tìm. Với danh sách khoảng 1.000 mục, kết quả hiện trong ≤ 200 ms tính từ phím cuối (F00 BR-9).
+  - So khớp:
+    - Không phân biệt có dấu hay không dấu, chữ hoa hay chữ thường; "đ" khớp "d".
+    - Gõ nhiều từ thì mục phải chứa đủ các từ, theo thứ tự bất kỳ. Mỗi từ nằm ở trường nào trong các trường được tìm cũng được.
+    - Bỏ qua khoảng trắng thừa và ký tự vô hình, kể cả dấu định hướng chữ U+200E, U+200F. Dữ liệu Vàm Cỏ có U+200E lẫn trong chữ, vd. giữa "k" và "ý" của "đăng ký".
+    - Chữ có dấu gõ bằng bộ gõ nào cũng cho cùng kết quả, dù dấu dựng sẵn hay dấu tách rời (tuan-thu T12). "Thủy" và "Thuỷ" (hai cách đặt dấu) đều khớp khi gõ "thuy".
+    - Ô trống, hoặc chỉ có khoảng trắng, thì hiện toàn bộ danh sách.
+  - Khi ô có chữ thì có nút xoá (✕). Bấm nút này thì ô trống, con trỏ vẫn ở trong ô, danh sách về như lúc chưa tìm.
+  - Đổi từ khoá thì danh sách về trang 1 (BR-8). Khi số kết quả thay đổi, trình đọc màn hình được báo số kết quả mới, con trỏ vẫn ở ô tìm.
+- BR-5: Chip lọc.
+  - Mục đích: lọc nhanh theo một nhóm, ví dụ lĩnh vực. Danh sách chip và chip chọn sẵn do chức năng quy định (F03 BR-2).
+  - Mỗi lúc chỉ chọn một chip. Chọn chip mới thì chip cũ bỏ chọn.
+  - Chip đang chọn có nền đậm và dấu ✓. Trình đọc màn hình báo trạng thái đang chọn (vd. "đã nhấn" hoặc "đã chọn", tuỳ phần mềm đọc); chip không chọn thì không được báo như vậy.
+  - Hàng chip dài: trên điện thoại vuốt ngang trong hàng; trên máy tính có nút cuộn (design-system §5). Cả trang không cuộn ngang.
+  - Đổi chip thì danh sách về trang 1 (BR-8).
+- BR-6: Nút chuyển dạng thẻ / dạng bảng.
+  - Mục đích: người dùng chọn cách xem danh sách. Dạng mặc định và việc nhớ lựa chọn do chức năng quy định (F03 BR-6).
+  - Hai lựa chọn đứng liền nhau, mỗi lúc chọn một. Lựa chọn đang dùng nổi bật. Trình đọc màn hình báo trạng thái đang chọn (vd. "đã nhấn" hoặc "đã chọn", tuỳ phần mềm đọc); lựa chọn kia không được báo như vậy.
+  - Chuyển dạng vẫn giữ nguyên từ khoá, bộ lọc, trang đang xem và thứ tự các mục.
+  - Màn hình dưới 600 px (điện thoại): không hiện nút này; danh sách luôn dạng thẻ (F03 BR-6, câu hỏi mở 29).
+- BR-7: Danh sách dạng bảng và dạng thẻ.
+  - Mục đích: hiện một trang kết quả. Các cột của bảng và nội dung thẻ do chức năng quy định.
+  - Dạng bảng:
+    - Có dòng tiêu đề cột; trình đọc màn hình đọc được tên cột của từng ô.
+    - Cuộn danh sách dài thì vẫn thấy dòng tiêu đề cột.
+    - Mục nào mở được chi tiết thì có một phần tử bấm được rõ ràng (ví dụ tên thủ tục), dùng được bằng bàn phím.
+    - Bảng rộng hơn màn hình thì chỉ vùng bảng cuộn ngang, trang không cuộn ngang.
+  - Dạng thẻ:
+    - Số cột theo độ rộng màn hình và chế độ kiosk (design-system §3 "Bố cục"). Chức năng có thể đặt số cột tối đa (F03 BR-7).
+    - Các thẻ cùng hàng cao bằng nhau; nút cuối thẻ thẳng hàng giữa các thẻ. Thẻ hẹp thì các nút xếp dọc.
+  - Hai dạng hiện cùng các mục, cùng thứ tự, cùng cách phân trang.
+- BR-8: Phân trang.
+  - Mục đích: chia danh sách dài thành nhiều trang. Số mục mỗi trang do chức năng quy định (F03 BR-7, F04 BR-5).
+  - Gồm nút Trước, các số trang và nút Sau. Trang n bắt đầu từ mục thứ (số mục mỗi trang × (n − 1) + 1).
+  - Khi nhiều trang, chỉ hiện trang đầu, trang cuối, trang hiện tại và hai trang kề bên; các trang bị bỏ qua thay bằng "…".
+  - Trang hiện tại có nền đậm; trình đọc màn hình đọc là "trang hiện tại". Nút Trước, Sau có tên để trình đọc màn hình đọc. Ở trang đầu, nút Trước không bấm được; ở trang cuối, nút Sau không bấm được.
+  - Chỉ có 1 trang thì không hiện phân trang.
+  - Bấm sang trang khác thì danh sách cuộn về đầu.
+  - Đổi từ khoá, chip hoặc bộ lọc thì về trang 1.
+  - Số trang nằm trên địa chỉ trang cùng từ khoá và bộ lọc (F03 BR-9, F04 BR-3), để chia sẻ link, quét QR hay bấm "Quay lại" đều về đúng trang.
+  - Số trang trên địa chỉ là số nguyên dương lớn hơn số trang đang có, dù dài bao nhiêu chữ số, thì hiện trang cuối.
+  - Số trang không hợp lệ thì hiện trang 1: để trống (`trang=`), có ký tự không phải chữ số (vd. "abc", "3abc", "1.5", "-1"), hoặc bằng 0 (vd. "0", "00").
+  - Số có chữ số 0 đứng đầu được hiểu như số thường: "03" là trang 3.
+- BR-9: Popup.
+  - Mục đích: xem chi tiết mà không rời trang đang xem. Nội dung do chức năng quy định (F03 BR-3).
+  - Khi mở:
+    - Con trỏ chuyển vào trong popup, trình đọc màn hình đọc tiêu đề popup.
+    - Trang phía sau bị phủ lớp tối và không cuộn được.
+    - Tab và Shift+Tab chỉ đi vòng giữa các phần tử trong popup. Ở chế độ kiosk, nút "Bắt đầu lại" (F09 BR-7) là phần tử cuối cùng trong vòng này: Tab, Shift+Tab vẫn đi vòng, kể cả qua nút này. Enter hoặc phím cách trên nút = bấm nút.
+  - Đóng bằng một trong các cách: nút ✕; phím Esc; bấm vào vùng tối bên ngoài popup; nút "Quay lại" của trình duyệt, nếu popup có địa chỉ riêng (F03 BR-8) — trừ chế độ kiosk, nơi "Quay lại" không đóng popup mà chỉ còn ba cách trước (F03 BR-8, ngoại lệ trên kiosk). Phím Esc chỉ đóng popup nằm trên cùng.
+  - Sau khi đóng: con trỏ trở về đúng nút đã mở popup; trang phía sau giữ nguyên nội dung và vị trí cuộn.
+  - Trên điện thoại, popup chiếm toàn màn hình. Nội dung dài thì cuộn bên trong popup; tiêu đề, nút ✕ và các nút hành động cuối popup luôn nhìn thấy.
+  - Popup nằm trên nút trợ lý và khung trợ lý. Độ rộng tối đa theo design-system §5.
+  - Riêng nút "Bắt đầu lại" của kiosk nằm trên popup, nhìn thấy và bấm được khi popup đang mở (F09 BR-7). Nút không che các nút hành động và lời miễn trừ ở cuối popup. Khi popup đóng, nút về vị trí thường.
+- BR-10: Nhãn trạng thái.
+  - Mục đích: cho biết nhanh tính chất của một mục: lĩnh vực, Toàn trình / Một phần, thời hạn, phí; đang trong hay ngoài giờ làm việc (F02). Không có nhãn "Ưu tiên" (F04 BR-6).
+  - Luôn có chữ; màu và biểu tượng chỉ để nhấn thêm. Loại nhãn theo design-system §5.
+  - Không bấm được; Tab không dừng ở nhãn.
+  - Nhãn không tràn khỏi khung chứa. Chữ dài thì xuống dòng, hoặc rút gọn kèm "…" nếu nội dung đầy đủ có ở chỗ khác (ví dụ trong popup).
+- BR-11: Trạng thái đang tải, lỗi, không có kết quả. Dùng chung cho F02–F06, cùng câu chữ và hình thức, hiện ở vùng nội dung (F08 BR-11).
+  - Đang tải:
+    - Hiện các khối xám giữ chỗ, có hình dạng gần giống nội dung sắp hiện, để trang không bị nhảy.
+    - Trình đọc màn hình được báo "Đang tải…".
+    - Các khối đứng yên, không có hiệu ứng chạy liên tục (BR-1).
+  - Lỗi:
+    - Gồm dòng chính "Chưa tải được dữ liệu.", câu của loại lỗi đúng nguyên văn ở F00 BR-6, nút "Thử lại", số điện thoại trung tâm bấm được để gọi. Lỗi loại "Lỗi hệ thống" kèm thêm mã tra cứu (F00 BR-7).
+    - Không bao giờ hiện mã kỹ thuật (thuat-ngu). Mã tra cứu không phải mã kỹ thuật.
+    - Trình đọc màn hình tự đọc thông báo ngay khi lỗi hiện ra, người dùng không phải di chuyển con trỏ tới đó.
+    - Bấm "Thử lại" thì chuyển sang đang tải, rồi hiện kết quả hoặc lỗi.
+  - Không có kết quả:
+    - Thông báo "Không tìm thấy <đối tượng> phù hợp với '<từ khoá>'". Đối tượng do chức năng đặt (thủ tục, lĩnh vực). Nếu chỉ lọc mà không có từ khoá thì bỏ phần "với '<từ khoá>'".
+    - Kèm 4 gợi ý: kiểm tra chính tả, xoá bộ lọc, hỏi trợ lý, gọi trung tâm.
+    - Có nút "Xoá bộ lọc": bấm thì xoá từ khoá và mọi bộ lọc, danh sách về đầy đủ, ở trang 1.
+    - Trang đã có nút "Xoá bộ lọc" trên thanh bộ lọc (F04 BR-8) → thông báo không có nút này, gợi ý xoá bộ lọc chỉ hiện bằng chữ. Trang không có thanh bộ lọc như vậy (vd. F03, F05) vẫn có nút trong thông báo (người dùng chốt 2026-10-12).
+    - Danh sách trống mà ô tìm trống và không có bộ lọc nào (chip "Tất cả", không lọc; tab cấp xã / cấp tỉnh của F04 không tính là bộ lọc) → ẩn nút "Xoá bộ lọc" và hai gợi ý "kiểm tra chính tả", "xoá bộ lọc"; chỉ còn gợi ý hỏi trợ lý, gọi trung tâm.
+    - Từ khoá hiện nguyên văn dạng chữ; ký tự đặc biệt không biến thành định dạng hay mã.
+- BR-12: Ô dịch vụ.
+  - Mục đích: lối tắt tới dịch vụ bên ngoài, đặt trên trang chủ (F02). Danh sách ô, tên ô, đích đến lấy từ dữ liệu (F01).
+  - Cả ô là một liên kết ra trang ngoài theo BR-3, gồm biểu tượng, tên (tối đa 2 dòng) và dấu hiệu "trang ngoài". Mỗi ô Tab dừng một lần.
+  - Ô chưa có link, hoặc có link sai định dạng theo BR-3 — áp dụng cho cả trang thật và trang xem trước thành phần (câu hỏi mở 30):
+    - Vẫn hiện, đúng vị trí trong danh sách ô. Đây là ngoại lệ của F08 BR-5 (mục để trống thì ẩn).
+    - Trông giống ô có link: cùng khung, biểu tượng, tên; không viền nét đứt, không mờ hơn, không có dòng chữ ghi chú. Chỉ khác là không có dấu hiệu "trang ngoài", vì bấm không mở trang nào.
+    - Không phải liên kết: bấm không có gì xảy ra; Tab bỏ qua. Trình đọc màn hình đọc tên ô như chữ thường, không đọc là liên kết.
+  - Số ô mỗi hàng theo độ rộng màn hình; các ô cùng hàng cao bằng nhau.
+- BR-13: Nút trợ lý nổi.
+  - Mục đích: mở trợ lý (F06) từ bất kỳ trang nào.
+  - Nằm cố định ở góc phải dưới, có ở mọi trang, gồm biểu tượng và chữ "Trợ lý". Ở chế độ kiosk, góc dưới bên trái có nút "Bắt đầu lại" đối xứng (F09 BR-7).
+  - Không che nội dung: cuối trang chừa khoảng trống để phần cuối cùng (chân trang) không nằm dưới nút.
+  - Bấm nút thì mở khung trợ lý, con trỏ vào ô nhập câu hỏi. Đóng khung (nút ✕ trong khung, hoặc bấm lại nút) thì con trỏ về nút trợ lý. Trình đọc màn hình đọc được khung đang mở hay đang đóng.
+  - Nút nằm trên nội dung trang, dưới popup (BR-9).
+
+## Tiêu chí chấp nhận
+
+- AC-1: Chỉ dùng bàn phím ở trang chủ, danh mục, lĩnh vực → tới được mọi nút, liên kết, ô tìm, chip, nút chuyển dạng, phân trang, ô dịch vụ, nút trợ lý, theo thứ tự đọc. Enter kích hoạt được. Phần tử đang được chọn luôn có viền nhìn thấy, kể cả ở chân trang nền xanh đậm.
+- AC-2: Bật chế độ kiosk ở khổ 1080×1920 → chữ và chiều cao của nút, ô tìm, chip, phân trang lớn lên theo design-system §3; không chữ nào bị cắt, trang không cuộn ngang. Ở khổ 375 px, mọi nút, chip và số trang có vùng bấm ≥ 24 × 24 px.
+- AC-3: Xem trang ở chế độ đen trắng (bỏ màu) → vẫn phân biệt được chip đang chọn, trang hiện tại, dạng xem đang chọn, nhãn Toàn trình / Một phần.
+- AC-4: Chạy công cụ kiểm tra khả năng tiếp cận tự động trên trang xem trước thành phần (design-system §10), cả chế độ thường và kiosk → không có lỗi về tương phản, nút thiếu tên hay ô nhập thiếu nhãn.
+- AC-5: Nút:
+  - Bấm "Gửi" của trợ lý hai lần thật nhanh → chỉ một câu hỏi được gửi; trong lúc chờ, nút hiện đang xử lý.
+  - Ở trang 1 của một danh sách, nút Trước đang vô hiệu: bấm không có gì xảy ra; trình đọc màn hình đọc nút này là không dùng được.
+  - Bấm một nút bật/tắt (ví dụ đọc câu trả lời, F07) → nút đổi hình thức, trình đọc màn hình đọc là đang bật. Bấm lại → trình đọc màn hình đọc là đang tắt.
+- AC-6: Liên kết ra trang ngoài:
+  - Bấm "Xem và nộp trên Cổng DVC" → mở ở tab mới; trình đọc màn hình đọc "(mở trang mới)". Ở tab mới, xem bằng công cụ dành cho nhà phát triển → trang không truy cập được tab cũ và không thấy địa chỉ trang nguồn.
+  - Trên trang xem trước thành phần (design-system §10), cho một liên kết và một ô dịch vụ cùng mang link `javascript:alert(1)` → liên kết hiện như chữ thường, ô dịch vụ hiện như ô chưa có link; bấm vào cả hai không có gì xảy ra.
+- AC-7: Gõ lần lượt "dang ky khai sinh", "ĐĂNG KÝ KHAI SINH", "  khai   sinh  đăng ký " → cả ba cho cùng một kết quả.
+- AC-8: Gõ "thuy" → ra cả mục viết "Thủy" và mục viết "Thuỷ". Gõ "đăng ký" bằng bộ gõ dấu tách rời → cùng kết quả như gõ dấu dựng sẵn. Dán "khai sinh" có lẫn ký tự vô hình (ví dụ ký tự rộng 0 chèn giữa "kh" và "ai", hoặc đứng đầu từ khoá) → kết quả như gõ "khai sinh". Dán "đăng ký" có U+200E giữa "k" và "ý" → kết quả như gõ "đăng ký".
+- AC-9: Gõ "khai sinh" rồi bấm ✕ → ô trống, con trỏ vẫn trong ô, danh sách đầy đủ ở trang 1. Không ô tìm nào có nút micro.
+- AC-10: Bấm chip "Đất đai" → chip có dấu ✓ và nền đậm; chip chọn trước đó bỏ chọn. Bật trình đọc màn hình, đi qua hàng chip → chip "Đất đai" được báo là đang chọn (vd. "đã nhấn" hoặc "đã chọn"); các chip khác không. Ở khổ 375 px, vuốt ngang được hàng chip; trang không cuộn ngang.
+- AC-11: Ở khổ 1280 px, danh sách thủ tục thường gặp:
+  - Sang trang 3, chuyển từ dạng thẻ sang dạng bảng rồi ngược lại → vẫn ở trang 3, cùng các thủ tục theo cùng thứ tự.
+  - Gõ "khai sinh" rồi chuyển dạng → từ khoá giữ nguyên, kết quả không đổi.
+  - Bật trình đọc màn hình, đi tới nút chuyển dạng → lựa chọn đang dùng được báo là đang chọn (vd. "đã nhấn" hoặc "đã chọn"); lựa chọn kia không.
+  - Ở khổ 375 px: không có nút chuyển dạng, danh sách dạng thẻ. Ở khổ 1280 px chọn dạng bảng rồi thu cửa sổ xuống 375 px → dạng thẻ, nút chuyển dạng biến mất; nới lại 1280 px → dạng bảng, nút hiện lại.
+- AC-12: Ở dạng bảng, cuộn xuống cuối trang kết quả → vẫn thấy dòng tiêu đề cột. Thu hẹp cửa sổ khi đang ở dạng bảng → chỉ vùng bảng cuộn ngang. Ở dạng thẻ, các thẻ cùng hàng cao bằng nhau và nút cuối thẻ thẳng hàng.
+- AC-13: Danh sách 20 trang, dãy phân trang ở từng trang:
+  - Trang 1: "Trước 1 2 … 20 Sau"; nút Trước không bấm được.
+  - Trang 2: "Trước 1 2 3 … 20 Sau".
+  - Trang 10: "Trước 1 … 9 10 11 … 20 Sau".
+  - Trang 19: "Trước 1 … 18 19 20 Sau".
+  - Trang 20: "Trước 1 … 19 20 Sau"; nút Sau không bấm được.
+  - Trang hiện tại luôn được đánh dấu. Đang ở trang 10, bấm trang 11 → danh sách cuộn về đầu.
+- AC-14: Danh sách chỉ có 1 trang → không thấy phân trang. Có 3 trang:
+  - Mở địa chỉ có số trang 99 → hiện trang 3. Số trang 99999999999999999999 (20 chữ số) → cũng hiện trang 3, trang không lỗi.
+  - Số trang để trống (`trang=`), "abc", "3abc", "1.5", "-1", "0" hoặc "00" → hiện trang 1.
+  - Số trang "03" → hiện trang 3, giống `trang=3`.
+- AC-15: Mở popup bằng bàn phím → con trỏ ở trong popup. Nhấn Tab liên tục → con trỏ đi vòng trong popup, không ra trang phía sau. Nhấn Esc → popup đóng, con trỏ ở đúng nút đã mở.
+- AC-16: Popup đóng được bằng ✕, Esc, hoặc bấm vùng tối bên ngoài; cách nào cũng giữ nguyên trang phía sau. Khi popup mở, lăn chuột không cuộn trang phía sau. Ở khổ 375 px, popup chiếm toàn màn hình; cuộn nội dung dài vẫn thấy tiêu đề và nút ✕.
+- AC-17: Nhãn:
+  - Nhãn Toàn trình, Một phần luôn có chữ. Không thẻ thủ tục nào có nhãn "Ưu tiên". Nhấn Tab qua một thẻ thủ tục → con trỏ không dừng ở nhãn.
+  - Thủ tục có thời hạn giải quyết dài hơn chỗ dành cho nhãn trên thẻ → nhãn rút gọn kèm "…", không tràn khỏi thẻ; mở popup thấy đủ câu.
+  - Nhãn lĩnh vực có tên dài → xuống dòng, không bị cắt chữ.
+- AC-18: Giả lập mạng chậm → vùng nội dung hiện khối giữ chỗ; trình đọc màn hình đọc "Đang tải…"; các khối đứng yên, không chạy hiệu ứng.
+- AC-19: Lỗi:
+  - Tắt mạng rồi mở danh mục → thấy "Chưa tải được dữ liệu.", câu "Không kết nối được tới máy chủ. Vui lòng kiểm tra mạng rồi thử lại.", nút "Thử lại", số điện thoại bấm được để gọi. Không có mã tra cứu, không có mã kỹ thuật.
+  - Bật trình đọc màn hình rồi làm lại → trình đọc màn hình tự đọc thông báo lỗi ngay khi hiện, người dùng không phải di chuyển con trỏ.
+  - Bật mạng, bấm "Thử lại" → danh sách hiện.
+  - Gây lỗi máy chủ → thông báo có câu "Hệ thống đang gặp sự cố. Vui lòng thử lại sau." và mã tra cứu (F00 AC-4).
+- AC-20: Không có kết quả:
+  - Ở khối thủ tục thường gặp chọn chip "Hộ tịch", gõ "xyzxyz" → "Không tìm thấy thủ tục phù hợp với 'xyzxyz'", đủ 4 gợi ý và nút "Xoá bộ lọc"; con trỏ vẫn ở ô tìm.
+  - Bấm "Xoá bộ lọc" → ô tìm trống, chip "Tất cả" được chọn, danh sách đầy đủ ở trang 1.
+  - Ở danh mục chọn lĩnh vực "Hộ tịch", gõ "xyzxyz" → thông báo như trên, đủ 4 gợi ý bằng chữ, nhưng không có nút "Xoá bộ lọc" trong thông báo; nút "Xoá bộ lọc" trên thanh bộ lọc vẫn có (F04 AC-14).
+  - Gõ `<b>abc</b>` → thông báo hiện đúng các ký tự `<b>abc</b>`, chữ không bị in đậm.
+  - Gõ "xyzxyz" ở trang lĩnh vực → "Không tìm thấy lĩnh vực phù hợp với 'xyzxyz'".
+  - Trên trang xem trước thành phần (design-system §10), cho danh sách trống khi ô tìm trống và không chọn bộ lọc nào → có thông báo không có kết quả, gợi ý hỏi trợ lý và gọi trung tâm; không có nút "Xoá bộ lọc", không có gợi ý "kiểm tra chính tả" hay "xoá bộ lọc". Gõ "xyzxyz" vào ô tìm (danh sách vẫn trống) → nút "Xoá bộ lọc" và đủ 4 gợi ý hiện lại.
+- AC-21: Ô dịch vụ, kiểm trên trang xem trước thành phần (design-system §10) và trên trang chủ thật (F02 AC-8):
+  - Bấm ô dịch vụ có link → mở ở tab mới theo BR-3.
+  - Ô chưa có link vẫn hiện đúng vị trí; cùng khung, biểu tượng, tên như ô có link; không có viền nét đứt, không mờ hơn, không có dòng chữ ghi chú, không có dấu hiệu "trang ngoài".
+  - Bấm ô chưa có link → không có gì xảy ra; Tab bỏ qua ô này; trình đọc màn hình đọc tên ô, không đọc là liên kết.
+- AC-22: Ở mọi trang thấy nút "Trợ lý" ở góc phải dưới. Cuộn tới cuối trang → nút không che chữ ở chân trang. Bấm nút → khung trợ lý mở, con trỏ ở ô nhập; bấm ✕ của khung → con trỏ về nút "Trợ lý". Mở popup từ câu trả lời của trợ lý → popup nằm trên khung trợ lý và nút.
+- AC-23: Mở và đóng popup, mở khung trợ lý, di chuột qua nút; xem bằng bảng hiệu ứng của công cụ dành cho nhà phát triển → mỗi hiệu ứng chỉ đổi độ mờ hoặc vị trí và dài ≤ 150 ms; không hiệu ứng nào chạy liên tục. Di chuột qua nút mà màu đổi ngay, không có hiệu ứng chuyển → đạt. Bật "giảm chuyển động" trên máy rồi làm lại → không còn hiệu ứng nào.
+- AC-24: Ở chế độ kiosk, mở popup chi tiết bằng bàn phím:
+  - Nhấn Tab liên tục → con trỏ đi qua các phần tử trong popup, tới nút "Bắt đầu lại" là phần tử cuối, rồi quay về phần tử đầu của popup; không ra trang phía sau. Nhấn Shift+Tab từ phần tử đầu → con trỏ tới nút "Bắt đầu lại".
+  - Cuộn tới cuối popup → nút "Bắt đầu lại" không che liên kết "Xem và nộp trên Cổng DVC" và lời miễn trừ.
+  - Đặt con trỏ ở nút "Bắt đầu lại", nhấn Enter → chạy đúng F09 BR-7 (như F09 AC-6). Làm lại với phím cách → cùng kết quả.
+  - Ngoài chế độ kiosk, vòng Tab trong popup không có nút này.
+- AC-25: Tốc độ ô tìm kiếm (BR-4). Trên trang xem trước thành phần (design-system §10), nạp danh sách 1.000 mục, gõ "dang ky" rồi gõ phím cuối "khai sinh" → danh sách thu gọn và hiện kết quả mới trong ≤ 200 ms tính từ phím cuối. Đo ở khổ 375 px, mạng 4G giả lập, CPU máy tính thường; lấy giá trị chậm nhất trong 10 lần gõ.
+- AC-26: Vị trí các mục trong trang (BR-8). Danh sách 50 mục, 12 mục mỗi trang:
+  - Trang 1 bắt đầu từ mục thứ 1; trang 2 từ mục thứ 13 (12 × 1 + 1); trang 5 từ mục thứ 49 và chỉ có 2 mục (49, 50). Tổng số trang là 5.
+  - Đổi sang 10 mục mỗi trang → trang 3 bắt đầu từ mục thứ 21 (10 × 2 + 1).
+  - Mở địa chỉ có `trang=03` → hiện trang 3, giống `trang=3`. Mở địa chỉ có `trang=` (để trống) → hiện trang 1.
+
+## Câu hỏi mở
+
+- Không còn câu hỏi mở riêng của C01.
+- Đã trả lời 2026-10-12: câu 7 (kiểu nhấn), 8 (bỏ nhãn "Ưu tiên"), 22 (nhắc đăng xuất trên kiosk), 29 (điện thoại luôn dạng thẻ), 30 (ô dịch vụ chưa có link vẫn hiện), 36 (liên kết Cổng DVC trên thẻ, dòng bảng — F03 BR-4), 37 (nút "Bắt đầu lại" — F09 BR-7).

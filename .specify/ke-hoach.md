@@ -64,7 +64,7 @@ Duyệt ngày 2026-10-08. Đánh `[x]` khi xong; ✋ = điểm dừng chờ ngư
 - [x] 6.1 Lát cắt mẫu: lĩnh vực → `GET /api/linh-vuc` → trang (F05) — đã chạy end-to-end ở nguồn Mẫu và PostgreSQL
 - [x] 6.2 code-reviewer + tester trên khung → mốc chuẩn hiệu năng: JS ban đầu 181,0 KiB gzip; Lighthouse mobile 96–98; CLS 0; API p95 < 10 ms (nguồn Mẫu)
 - [x] 6.2b Công cụ chạy dev (2026-10-16): `DichVuCong.AppHost` (.NET Aspire 13.6.1) chạy Api + Vite + dashboard bằng một lệnh, không ServiceDefaults (tránh OpenTelemetry ghi URL có dữ liệu cá nhân); Swagger UI `/swagger` chỉ Development + bản Debug, CSP giữ nguyên văn (BaseLayout, script ngoài); ghim MessagePack 2.5.307 (GHSA-qhrr-8q5h-9q3h)
-- [ ] 6.3 README chạy local
+- [x] 6.3 README chạy local (`README.md`; đã thử clone sạch: npm ci, build FE, dotnet build, test, chạy demo đều qua)
 
 ## Giai đoạn 7 — Chức năng
 
